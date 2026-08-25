@@ -22,16 +22,26 @@ cred={
     "ENCRYPTION_KEY": ENCRYPTION_KEY
     }
 
-start_date = "2021-01-01"
+start_date = "2019-01-01"
 end_date = "2025-12-31"
 timeframe = "1d"
 
 async def main():
     try:
         client = FivePaisaClient(cred=cred)
+
         #Store Script Book from 5Paisa
-        df = await store_scripts(client, store=True, filetype="csv")
-        print(df)
+        # df = await store_scripts(client, store=True, filetype="parquet")
+
+        #Fetch Script Book from local storage
+        scripts = await get_scripts(filetype="parquet", filename="script_details")
+
+        #List of tradable stocks
+        stocks = await get_index(indices=["nse_100", "nse_midcap_100", "nse_smallcap_100"])
+
+        #Fetch stock meta data
+        df_final = await get_stock_meta_data(scripts=scripts, stocks=stocks) 
+        print(df_final)
     except Exception as e:
         print(f"Error in the main function: {e}")
 

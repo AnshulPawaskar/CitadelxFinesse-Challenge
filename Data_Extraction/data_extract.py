@@ -1,4 +1,4 @@
-from polars import DataFrame
+from polars import DataFrame, read_csv, read_parquet, concat, col
 
 
 async def store_scripts(client, store=True, filetype="csv"):
@@ -7,9 +7,9 @@ async def store_scripts(client, store=True, filetype="csv"):
         df = DataFrame(data)
         if store:
             if filetype == "csv":
-                df.write_csv("script_details.csv")
+                df.write_csv("./ScriptBook/script_details.csv")
             elif filetype == "parquet":
-                df.write_parquet("script_details.parquet")
+                df.write_parquet("./ScriptBook/script_details.parquet")
         return df
     except Exception as e:
         print(f"Error storing scripts: {e}")
@@ -17,7 +17,10 @@ async def store_scripts(client, store=True, filetype="csv"):
 
 async def get_scripts(filetype="csv", filename="script_details"):
     try:
-        data = DataFrame.read_csv(f"{filename}.{filetype}")
+        if filetype == "csv":
+            data = read_csv(f"./ScriptBook/{filename}.csv")
+        elif filetype == "parquet":
+            data = read_parquet(f"./ScriptBook/{filename}.parquet")
         return data
     except Exception as e:
         print(f"Error fetching scripts: {e}")
@@ -28,11 +31,23 @@ async def get_index(indices=["nse_100", "nse_midcap_100", "nse_smallcap_100"]):
         df = None
         for i in indices:
             if df is None:
-                df = DataFrame.read_csv(f"{i}.csv")
+                df = read_csv(f"./Stocks/{i}.csv")
             else:
-                df = df + DataFrame.read_csv(f"{i}.csv")
+                df = concat([df, read_csv(f"./Stocks/{i}.csv")], how="vertical")
         return df
     except Exception as e:
         print(f"Error fetching index data: {e}")
         return None
 
+async def get_stock_meta_data(scripts, stocks):
+    try:
+        scripts = scripts.filter(
+            (col("Exch") == "N") &
+            (col("ExchType") == "C") &
+            (col("Series") == "EQ")
+        ).select(["Name", "Exch", "ExchType", "ScripCode", "ScripData"])
+        df = stocks.join(scripts, left_on="Symbol", right_on="Name", how="left")
+        return df
+    except Exception as e:
+        print(f"Error fetching stock meta data: {e}")
+        return None

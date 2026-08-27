@@ -51,3 +51,21 @@ async def get_stock_meta_data(scripts, stocks):
     except Exception as e:
         print(f"Error fetching stock meta data: {e}")
         return None
+
+async def get_stock_data(client, stocks_df, year, half, timeframe):
+    try:
+        if half > 2 or half < 1:
+            raise ValueError("Half must be either 1 or 2.")
+        start_date = f"{year}-{'01' if half == 1 else '07'}-01"
+        end_date = f"{year}-{'06' if half == 1 else '12'}-31"
+        for i in stocks_df.iter_rows():
+            scrip_data = i[3]  # Assuming ScripData is the 5th column
+            if scrip_data:
+                data = DataFrame(client.fetch_historical_data(scrip_data, start_date, end_date, timeframe))
+                data.write_parquet(f"./Data/{year}/{half}/{scrip_data}.parquet")
+    except Exception as e:
+        print(f"Error fetching stock data: {e}")
+        return None
+
+
+

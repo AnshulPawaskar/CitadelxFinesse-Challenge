@@ -118,7 +118,7 @@ def summarize_stability(results: pl.DataFrame, group_col: str) -> pl.DataFrame:
     ).sort(group_col)
 
 
-if __name__ == "__main__":
+def run():
     momentum_results = run_momentum_sensitivity()
     print("\n--- Momentum lookback stability ---")
     print(summarize_stability(momentum_results, "LookbackDays"))
@@ -126,3 +126,8 @@ if __name__ == "__main__":
     trend_results = run_trend_sensitivity()
     print("\n--- Trend window stability ---")
     print(summarize_stability(trend_results, "LookbackDays"))
+    return momentum_results, trend_results
+
+
+if __name__ == "__main__":
+    run()

@@ -52,3 +52,9 @@ def load_universe_history(symbol_to_scrip_data: dict[str, str], timeframe: str =
         print(f"Warning: no usable data found for {len(missing)} symbols: {missing}")
 
     return history
+
+
+def truncate_history(history: dict[str, pl.DataFrame], end_date) -> dict[str, pl.DataFrame]:
+    """Drop all rows after end_date from every symbol's history — used to hard-restrict backtests/
+    strategy generation to a fixed window (e.g. 2020-2025) with zero chance of later data leaking in."""
+    return {symbol: df.filter(pl.col("Datetime") <= end_date) for symbol, df in history.items()}

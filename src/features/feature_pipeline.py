@@ -58,7 +58,10 @@ def compute_universe_features(
         for task in tasks:
             results.append(_compute_worker(task))
 
-    return pl.concat(results, how="vertical")
+    # Worker completion order is non-deterministic (OS process scheduling), so force a fixed
+    # row order here — otherwise the same universe/dates can silently get a different row order
+    # on every run, which can flip tie-breaks in downstream sorts/selection.
+    return pl.concat(results, how="vertical").sort(["Symbol", "Datetime"])
 
 
 def run_feature_pipeline(write_output: bool = True) -> pl.DataFrame:

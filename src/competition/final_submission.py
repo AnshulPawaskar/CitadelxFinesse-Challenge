@@ -75,7 +75,7 @@ def build_final_portfolio_report(selected: pl.DataFrame, features_df: pl.DataFra
     correlations = _correlation_to_portfolio(history, symbols, formation_date)
     universe_lookup = dict(zip(universe["Symbol"].to_list(), universe["Index"].to_list()))
 
-    report = selected.join(scores, on="Symbol", how="left").sort("AlphaScore", descending=True)
+    report = selected.join(scores, on="Symbol", how="left").sort("AlphaScore", descending=True, maintain_order=True)
     report = report.with_columns(pl.Series("Rank", range(1, report.height + 1)))
     report = report.with_columns([
         pl.col("Symbol").replace_strict(universe_lookup, default="Unknown").alias("Universe"),

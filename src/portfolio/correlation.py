@@ -44,7 +44,7 @@ def select_with_correlation_filter(
     """Walk candidates in AlphaScore order, keeping a stock only if its trailing-return correlation
     with every already-selected stock stays below the threshold. Falls back to the next-highest-alpha
     candidates (ignoring correlation) if the filter can't fill all n slots."""
-    candidates = signal_df.sort("AlphaScore", descending=True).head(top_n_candidates)
+    candidates = signal_df.sort("AlphaScore", descending=True, maintain_order=True).head(top_n_candidates)
     symbols = candidates["Symbol"].to_list()
 
     returns = build_trailing_returns(history, symbols, as_of_date, window)

@@ -25,6 +25,7 @@ STAGES = [
     ("sensitivity", "src.research.sensitivity", "run"),
     ("competition_backtest", "src.competition.final_submission", "run"),
     ("reports", "src.reporting.build_report", "run"),
+    ("final_report", "src.reporting.final_report", "build_final_submission_report"),
     ("oracle_comparison", "src.research.oracle_comparison_2026h1", "run"),
 ]
 

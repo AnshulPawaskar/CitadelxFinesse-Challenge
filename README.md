@@ -1,9 +1,9 @@
-# Static Portfolio Selection — CitadelxFinesse Challenge
+# Round 2 - Portfolio Selection — CitadelxFinesse Challenge
 
 **Team:** Quantify
 **Members:** Anshul Pawaskar, Jatin Dhanani, Ashish Kela
 
-A static (buy-once, hold, zero-rebalancing) portfolio selection engine built on technical and
+A portfolio selection engine built on technical and
 quantitative signals, covering the Nifty 100 + Midcap 100 + Smallcap 100 universe.
 
 ## Setup
@@ -50,8 +50,7 @@ python run_pipeline.py
 
 Runs every stage in order: data audit → feature engineering → baseline backtest → model comparison
 → feature correlation → correlation-aware selection → weighting comparison → the full experiment
-matrix → sensitivity analysis → the official competition backtest → charts/Excel/HTML reports →
-the final submission report → the oracle (hindsight) comparison. Takes ~90 seconds.
+matrix → sensitivity analysis → charts/Excel/HTML reports. Takes about 90 seconds.
 
 ```bash
 python run_pipeline.py --list              # see all stage names
@@ -65,8 +64,7 @@ Every stage can also be run standalone, e.g.:
 
 ```bash
 python -m src.features.feature_pipeline        # rebuild results/features.parquet
-python -m src.competition.final_submission     # the official competition backtest
-python -m src.reporting.final_report           # regenerate the submission report
+python -m src.reporting.build_report           # regenerate charts, HTML, and Excel outputs
 ```
 
 ### 4. Tests
@@ -92,8 +90,7 @@ src/
   portfolio/                  Stock selection (Top-N / correlation-filtered) and weighting methods
   backtest/                   Static portfolio construction, execution, costs, metrics, attribution
   research/                   Experiments, sensitivity analysis, model/weighting comparisons
-  competition/                The official, isolated competition submission backtest
-  reporting/                  Charts, Excel workbook, HTML report, final submission report
+  reporting/                  Charts, Excel workbook, and HTML report
 
 tests/                        Unit tests (pytest)
 results/                      Generated CSVs/parquet outputs

@@ -1,0 +1,9 @@
+py5paisa==0.7.21.2
+python-dotenv==1.2.3
+polars==1.44.0
+numpy==2.5.2
+pandas==3.0.5
+TA-Lib==0.7.1
+matplotlib==3.11.1
+xlsxwriter==3.2.9
+pytest==9.1.1

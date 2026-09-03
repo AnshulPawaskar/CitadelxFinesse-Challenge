@@ -44,21 +44,19 @@ def run():
     full_end_date = features["Datetime"].max()
     oos_start = datetime(2026, 1, 1)
 
-    # Strategy generation + backtest are hard-restricted to 2020-2025 data — 2026 rows are simply
-    # not present in this dict, so they can never leak into the signal or the backtest pricing.
+    # truncated history so 2026 rows can never leak into the signal or backtest
     backtest_history = truncate_history(full_history, BACKTEST_END_DATE)
 
     signal = build_composite_score(features, FORMATION_DATE, MODEL_NAME)
     actual_formation_date = signal["Datetime"][0]
     selected = equal_weight(select_top_n(signal))
 
-    # Backtest: fresh capital, formed 2021-01-01, held through 2025-12-31 only.
+    # backtest: fresh capital, formed 2021-01-01, held through 2025-12-31
     backtest_result = run_backtest_from_selection(selected, backtest_history, actual_formation_date, BACKTEST_END_DATE)
     daily_nav = backtest_result["daily_nav"]
     metrics = compute_metrics(daily_nav, backtest_result["initial_capital"])
 
-    # OOS 2026 H1: a SEPARATE fresh investment in the SAME picks/weights, entered at 2026 prices —
-    # never a continuation of the capital the backtest above grew to.
+    # OOS 2026 H1: same picks/weights, fresh capital re-entered at 2026 prices
     oos_result = run_backtest_from_selection(selected, full_history, BACKTEST_END_DATE, full_end_date)
     oos_metrics = (
         compute_metrics(oos_result["daily_nav"], oos_result["initial_capital"])

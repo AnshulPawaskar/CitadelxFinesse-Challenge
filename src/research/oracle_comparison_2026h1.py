@@ -1,9 +1,6 @@
-"""Standalone comparison: our ACTUAL official portfolio (same picks as src/competition/final_submission.py,
-formed 2021-01-01 using only pre-2021 data) vs. a hindsight "oracle" portfolio that cherry-picks the
-10 best-performing stocks of 2026 H1 using their ACTUAL future returns. The oracle is NOT a valid
-trading strategy (it uses information that wasn't available on the formation date) — it only exists
-to show the gap between our model and a theoretical best case, using the SAME entry timing/capital
-so the comparison is apples-to-apples with the official OOS 2026 H1 result.
+"""Compares our official portfolio (same picks as src/competition/final_submission.py) against a
+hindsight "oracle" that picks the 10 best-performing stocks of 2026 H1 using their actual future
+returns. The oracle isn't a valid strategy, it's a theoretical ceiling for comparison only.
 """
 from datetime import datetime
 
@@ -25,8 +22,8 @@ END_DATE = datetime(2026, 6, 30)
 
 
 def build_oracle_signal(history: dict[str, pl.DataFrame], formation_date, end_date) -> pl.DataFrame:
-    """Rank every symbol by its ACTUAL realized return over [formation_date, end_date] using future
-    data — a cheat only meant for comparison, never for real portfolio selection."""
+    """Ranks every symbol by its actual realized return over [formation_date, end_date] using
+    future data. Only for comparison, never for real selection."""
     rows = []
     for symbol, df in history.items():
         entry = get_entry_price(df, formation_date)
@@ -46,14 +43,13 @@ def run():
     features = pl.read_parquet(RESULTS_DIR / "features.parquet")
     history = load_universe_history(get_symbol_to_scrip_data())
 
-    # --- Our REAL, official portfolio: the exact same picks as final_submission.py, formed
-    # 2021-01-01 using only pre-2021 data, re-entered with fresh capital at the OOS boundary. ---
+    # our official portfolio, re-entered with fresh capital at the OOS boundary
     real_signal = build_composite_score(features, OFFICIAL_FORMATION_DATE, MODEL_NAME)
     real_selected = equal_weight(select_top_n(real_signal, n=MAX_HOLDINGS))
     real_result = build_static_portfolio(real_selected, history, ENTRY_DATE, END_DATE, INITIAL_CAPITAL)
     real_metrics = compute_metrics(real_result["daily_nav"], INITIAL_CAPITAL)
 
-    # --- Hindsight "oracle" selection (cheats using future returns), same entry timing/capital ---
+    # hindsight oracle selection, same entry timing/capital
     oracle_signal = build_oracle_signal(history, ENTRY_DATE, END_DATE)
     oracle_selected = equal_weight(select_top_n(oracle_signal, n=MAX_HOLDINGS))
     oracle_result = build_static_portfolio(oracle_selected, history, ENTRY_DATE, END_DATE, INITIAL_CAPITAL)

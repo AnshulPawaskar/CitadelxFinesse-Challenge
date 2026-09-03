@@ -1,14 +1,8 @@
-"""The official competition submission backtest — deliberately kept separate from src/research/
-per the spec's instruction not to mix research experiments with the final competition result.
+"""Official competition submission backtest. Kept separate from src/research/ so the final result
+never mixes with the exploratory experiments.
 
-Chosen model: momentum_3m (63-day skip-month momentum, single factor). Selected based on the
-Phase 9/10 evidence: it had the best average Net P&L and CAGR across all 9 formation dates AND
-0 negative-P&L periods (the most parameter-stable signal tested), matching the spec's ranking
-priority (Net P&L primary, stability/robustness secondary) better than the heavier composite model.
-
-Selection: simple Top-10 (Method A) — correlation filtering (Method B) did not change the top-10
-in any comparison we ran, so the extra complexity isn't justified here.
-Weighting: equal weight — performed as well as alpha-weighting with full transparency.
+Model: momentum_3m, top-10 equal-weight. Chosen from the Phase 9/10 experiment matrix results
+(best average Net P&L/CAGR, zero negative-P&L formation periods, most stable across formation dates).
 """
 from datetime import datetime
 
@@ -93,23 +87,22 @@ def run():
     full_history = load_universe_history(get_symbol_to_scrip_data())
     universe = build_universe()
 
-    # Strategy generation (signal + backtest) is hard-restricted to 2020-01-01..2025-12-31 — the
-    # 2026 rows are simply not present in this dict, so they can't leak into selection or pricing.
+    # strategy generation never sees 2026 data — truncated history, not just a later end_date
     backtest_history = truncate_history(full_history, COMPETITION_END_DATE)
 
     signal = build_composite_score(features, FORMATION_DATE, MODEL_NAME)
     actual_formation_date = signal["Datetime"][0]
     selected = equal_weight(select_top_n(signal, n=MAX_HOLDINGS))
 
-    # --- Backtest: fresh Rs 1,00,00,000, formed 2021-01-01, held through 2025-12-31 ---
+    # backtest: fresh capital, formed 2021-01-01, held through 2025-12-31
     backtest_result = build_static_portfolio(
         selected, backtest_history, actual_formation_date, COMPETITION_END_DATE, initial_capital=INITIAL_CAPITAL
     )
     validate_no_rebalancing(backtest_result["trade_log"])
     backtest_metrics = compute_metrics(backtest_result["daily_nav"], backtest_result["initial_capital"])
 
-    # --- OOS 2026 H1: a SEPARATE fresh Rs 1,00,00,000 invested in the SAME picks/weights, entered
-    # at 2026 prices — never a continuation of the grown 2021-2025 capital.
+    # OOS 2026 H1: same picks/weights, but fresh capital re-entered at 2026 prices, not a
+    # continuation of the capital the backtest above grew to
     oos_result = build_static_portfolio(
         selected, full_history, COMPETITION_END_DATE, full_history[selected["Symbol"][0]]["Datetime"].max(),
         initial_capital=INITIAL_CAPITAL,

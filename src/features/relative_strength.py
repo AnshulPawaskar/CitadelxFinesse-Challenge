@@ -1,9 +1,7 @@
 """Relative strength vs. a benchmark return index.
 
-No local Nifty 100 / Midcap 100 / Smallcap 100 *index-level* OHLCV series exists in this repo
-(flagged in the Phase 1 data audit) — only constituent lists. Until real benchmark data is
-sourced, build_synthetic_benchmark() provides an equal-weighted universe proxy so downstream
-features can still be computed; swap it out once real index data is available.
+No local Nifty index-level OHLCV series exists in this repo, only constituent lists, so
+build_synthetic_benchmark() uses an equal-weighted universe proxy until real index data is sourced.
 """
 import polars as pl
 

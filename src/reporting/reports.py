@@ -1,9 +1,7 @@
 """Render performance_report.html embedding the generated charts and key metrics tables.
 
-Note: PDF export isn't generated here — it would require an extra heavyweight dependency
-(e.g. weasyprint/wkhtmltopdf with system-level packages) that isn't installed in this venv.
-Say the word if you want that added; the HTML report below can also just be printed to PDF
-from a browser in the meantime.
+PDF export isn't generated here; it would need an extra dependency (weasyprint/wkhtmltopdf).
+The HTML report can be printed to PDF from a browser in the meantime.
 """
 from src.config import REPORTS_DIR, PLOTS_DIR
 

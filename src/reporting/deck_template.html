@@ -1,0 +1,300 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Team Quantify - Portfolio research</title>
+<style>
+:root{--bg:#e8edf4;--paper:#ffffff;--ink:#0f1b2d;--mute:#5b6b84;--line:#d9e1ec;--navy:#14325c;--teal:#0a8f7a;--blue:#2563eb;--amber:#d97706;--red:#c0392b;--soft:#f3f6fb;--grey:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);overflow:hidden;font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink)}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:0 0;background:var(--paper);box-shadow:0 20px 60px #0003;overflow:hidden}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .5s ease,transform .5s ease}
+.slide.active{opacity:1;pointer-events:auto;transform:none}.slide.past{transform:translateX(-30px)}
+/* template chrome */
+.hdr{position:absolute;left:0;right:0;top:0;height:92px;display:flex;align-items:center;justify-content:space-between;padding:0 72px;border-bottom:2px solid var(--navy);background:#fff}
+.org{display:flex;align-items:center;gap:22px}.org img{height:68px}.org .sep{width:2px;height:46px;background:var(--line)}
+.org .nm{font-size:20px;line-height:1.2;font-weight:700;color:var(--navy);letter-spacing:.01em}.org .nm small{display:block;font-weight:500;color:var(--mute);font-size:16px}
+.team{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:12px}
+.team i{display:inline-block;width:14px;height:14px;background:var(--teal);border-radius:3px}
+.ftr{position:absolute;left:0;right:0;bottom:0;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 72px;border-top:1px solid var(--line);background:var(--soft);font-size:19px;color:var(--mute)}
+.ftr b{color:var(--navy)}.pg{font-weight:700;color:var(--navy);font-size:21px}
+.body{position:absolute;left:72px;right:72px;top:122px;bottom:90px;display:flex;flex-direction:column}
+.kick{font-size:20px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
+h2{font-size:50px;line-height:1.1;font-weight:800;color:var(--navy);margin-top:8px;letter-spacing:-.01em}
+h2 em{font-style:normal;color:var(--teal)}
+.lead{font-size:26px;color:var(--mute);margin-top:12px;line-height:1.4}
+.row{display:flex;gap:40px;flex:1;min-height:0;margin-top:28px}.col{display:flex;flex-direction:column;min-width:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 30px;box-shadow:0 2px 10px #14325c10}
+.card.soft{background:var(--soft)}
+.cv{position:relative;flex:1;min-height:0}.cv canvas{position:absolute;inset:0;width:100%;height:100%}
+.cap{font-size:17px;color:var(--mute);margin-top:10px;line-height:1.35;border-top:1px solid var(--line);padding-top:8px}.cap b{color:var(--navy)}
+.ctitle{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:10px}
+ul.pts{list-style:none;display:flex;flex-direction:column;gap:22px}
+ul.pts li{font-size:28px;line-height:1.38;padding-left:34px;position:relative;color:#26364f}
+ul.pts li:before{content:"";position:absolute;left:0;top:.5em;width:14px;height:14px;border-radius:3px;background:var(--teal)}
+ul.pts li b{color:var(--navy)}
+.kpis{display:grid;gap:24px}.k4{grid-template-columns:repeat(4,1fr)}.k3{grid-template-columns:repeat(3,1fr)}
+.kpi{border-top:5px solid var(--navy);padding:22px 26px}.kpi .n{font-size:64px;font-weight:800;line-height:1;color:var(--navy)}.kpi .l{font-size:21px;color:var(--mute);margin-top:10px;line-height:1.3}
+.kpi.g{border-top-color:var(--teal)}.kpi.g .n{color:var(--teal)}.kpi.a{border-top-color:var(--amber)}.kpi.a .n{color:var(--amber)}
+.good{color:var(--teal)}.warn{color:var(--amber)}.bad{color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:26px}th{text-align:left;color:var(--mute);font-weight:600;font-size:20px;padding:10px 12px;border-bottom:2px solid var(--navy)}td{padding:19px 12px;border-bottom:1px solid var(--line)}tr.hl td{background:#0a8f7a14;font-weight:700}
+table.cmp td{padding:19px 12px;font-size:25px}table.t2{font-size:21px}table.t2 th{font-size:18px;padding:8px 10px}table.t2 td{padding:5px 10px;font-size:21px}table.t3 td{padding:15px 10px;font-size:23px}table.t3 th{font-size:19px}.t-pur{background:#7c3aed1a;color:#7c3aed}.t-grey{background:#94a3b833;color:#5b6b84}.tag{white-space:nowrap;display:inline-block;padding:4px 14px;border-radius:99px;font-size:19px;font-weight:700}.t-ok{background:#0a8f7a1c;color:var(--teal)}.t-warn{background:#d977061c;color:var(--amber)}.t-info{background:#2563eb1a;color:var(--blue)}
+.fade{opacity:0;transform:translateY(12px)}.active .fade{animation:up .6s forwards}.d1{animation-delay:.15s!important}.d2{animation-delay:.3s!important}.d3{animation-delay:.45s!important}.d4{animation-delay:.6s!important}
+@keyframes up{to{opacity:1;transform:none}}
+/* title */
+.title .body{top:122px}
+.title h1{font-size:76px;line-height:1.06;font-weight:800;color:var(--navy);letter-spacing:-.02em}.title h1 em{font-style:normal;color:var(--teal)}
+.org-big{display:flex;align-items:center;gap:26px;padding:22px 28px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.org-big img{height:64px}.org-big .t{font-size:24px;font-weight:700;color:var(--navy);line-height:1.25}.org-big .t small{display:block;font-size:19px;font-weight:500;color:var(--mute);margin-top:4px}
+.pres{display:flex;gap:18px}.pres div{padding:16px 26px;border-radius:12px;background:var(--navy);color:#fff;font-size:26px;font-weight:700}.pres small{display:block;font-size:15px;font-weight:500;opacity:.75;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+/* index */
+.idx{display:grid;grid-template-columns:1fr 1fr;gap:16px 40px;margin-top:26px}
+.it{display:flex;align-items:center;gap:24px;padding:16px 26px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#fff;transition:.2s}.it:hover{border-color:var(--teal);box-shadow:0 4px 16px #0a8f7a22}
+.it .no{width:52px;height:52px;border-radius:12px;background:var(--navy);color:#fff;font-weight:800;font-size:25px;display:flex;align-items:center;justify-content:center;flex:none}
+.it .tx{flex:1;font-size:26px;font-weight:700;color:var(--navy);line-height:1.2}.it .tx small{display:block;font-weight:500;color:var(--mute);font-size:19px;margin-top:3px}.it .pn{font-size:20px;color:var(--mute);font-weight:700}
+/* pipeline + funnel */
+.pipe{display:flex;gap:14px;margin-top:6px}.st{flex:1;background:var(--soft);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:12px;padding:20px 22px;text-align:left}
+.st .s{font-size:18px;font-weight:800;color:var(--teal);letter-spacing:.1em}.st b{display:block;font-size:26px;color:var(--navy);margin:6px 0 4px}.st span{font-size:19px;color:var(--mute);line-height:1.3;display:block}
+.fn{margin:0 auto 14px;border-radius:12px;padding:16px 20px;text-align:center;color:#fff;font-size:20px}.fn b{display:block;font-size:30px}
+.tl{display:flex;height:112px;border-radius:12px;overflow:hidden;font-weight:700;font-size:23px;text-align:center}.tl div{display:flex;align-items:center;justify-content:center;padding:0 12px;transform:scaleX(0);transform-origin:left}
+.active .tl div{animation:sx .8s forwards}.active .tl div:nth-child(2){animation-delay:.4s}.active .tl div:nth-child(3){animation-delay:.8s}@keyframes sx{to{transform:none}}
+</style></head><body>
+<div id="stage">
+
+<!-- 1 TITLE -->
+<section class="slide title" data-i="0">
+<div class="hdr"><div class="org">__ORGLOGO__<div class="sep"></div><div class="nm">__LABNAME__</div></div><div class="team"><i></i>Team Quantify</div></div>
+<div class="body"><div style="display:flex;gap:56px;flex:1;margin-top:10px">
+<div class="col" style="flex:1.05;justify-content:center;gap:34px">
+<div class="kick fade">CitadelxFinesse Portfolio Challenge &middot; Research Presentation</div>
+<h1 class="fade d1">Stock selection tested <em>without look-ahead</em> using walk-forward validation</h1>
+<p class="lead fade d2" style="margin-top:0">300 NSE stocks &middot; 13 signals, including machine learning and deep learning &middot; every decision is tested and can be repeated.</p>
+<div class="fade d3"><div style="font-size:18px;color:var(--mute);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:10px">Team Quantify &middot; Presenters</div>
+<div class="pres"><div><small>Presenter</small>Anshul Pawaskar</div><div><small>Presenter</small>Ashish Kela</div><div><small>Presenter</small>Jatin Dhanani</div></div></div>
+</div>
+<div class="col" style="flex:.95;justify-content:center;gap:24px">
+<div class="card fade d2" style="padding:22px 28px"><div class="ctitle">Competition window &middot; 1 Jan - 30 Jun 2026</div>
+<div style="height:380px;position:relative"><canvas id="c_t" style="position:absolute;inset:0;width:100%;height:100%"></canvas></div>
+<div class="kpis k3" style="margin-top:16px"><div><div style="font-size:46px;font-weight:800;color:var(--teal)" data-count="__H1RET__" data-dec="1" data-suf="%" data-pre="+">0</div><div style="font-size:18px;color:var(--mute)">Strategy (net of costs)</div></div>
+<div><div style="font-size:46px;font-weight:800;color:var(--grey)" data-count="__H1B__" data-dec="1" data-suf="%" data-pre="+">0</div><div style="font-size:18px;color:var(--mute)">Equal-weight benchmark</div></div>
+<div><div style="font-size:46px;font-weight:800;color:var(--navy)" data-count="__MULT__" data-dec="1" data-suf="x">0</div><div style="font-size:18px;color:var(--mute)">Return multiple</div></div></div></div>
+<div class="org-big fade d4"><span class="lgs" style="display:flex;gap:16px;align-items:center"></span><div class="t">__LABNAME__</div></div>
+</div></div></div>
+<div class="ftr"><span><b>Team Quantify</b> &nbsp;|&nbsp; CitadelxFinesse Portfolio Challenge</span><span class="pg">1 / __N__</span></div></section>
+
+<!-- 2 INDEX -->
+<section class="slide" data-i="1">__HDR__
+<div class="body"><div class="kick">Index</div><h2>Outline: from strategy selection to <em>final result</em></h2>
+<div class="idx">
+<div class="it" data-go="2"><div class="no">1</div><div class="tx">Problem and research design<small>Objective, rules, method</small></div><div class="pn">p.3</div></div>
+<div class="it" data-go="8"><div class="no">6</div><div class="tx">Portfolio weights<small>Equal weight vs Markowitz, CAPM</small></div><div class="pn">p.9</div></div>
+<div class="it" data-go="3"><div class="no">2</div><div class="tx">Strategy search<small>13 signals, ML, DL and RL</small></div><div class="pn">p.4-5</div></div>
+<div class="it" data-go="9"><div class="no">7</div><div class="tx">Robustness tests<small>Random portfolios, bootstrap, deflated Sharpe</small></div><div class="pn">p.10</div></div>
+<div class="it" data-go="5"><div class="no">3</div><div class="tx">Validation method<small>Walk-forward, label gap, holdout period</small></div><div class="pn">p.6</div></div>
+<div class="it" data-go="10"><div class="no">8</div><div class="tx">Competition result<small>Return and profit by stock</small></div><div class="pn">p.11</div></div>
+<div class="it" data-go="6"><div class="no">4</div><div class="tx">Signal research<small>Predictive power by holding period</small></div><div class="pn">p.7</div></div>
+<div class="it" data-go="11"><div class="no">9</div><div class="tx">Each year and conclusion<small>Year-by-year results, decisions</small></div><div class="pn">p.12-13</div></div>
+<div class="it" data-go="7"><div class="no">5</div><div class="tx">Rebalancing frequency<small>Turnover, cost and signal decay</small></div><div class="pn">p.8</div></div>
+</div>
+<div class="card soft fade d3" style="margin-top:26px;display:flex;align-items:center;gap:30px;font-size:28px;color:var(--navy)"><b>Final design:</b> blend of three signals (6-month momentum, MLP, risk-adjusted momentum) &nbsp;&#8594;&nbsp; quarterly rebalance &nbsp;&#8594;&nbsp; 10 stocks, equal weight</div>
+</div>__FTR2__</section>
+
+<!-- 3 CHALLENGE & DESIGN -->
+<section class="slide" data-i="2">__HDR__
+<div class="body"><div class="kick">1 &middot; Problem and research design</div><h2>Which 10 stocks to hold, <em>and how reliable is the answer?</em></h2>
+<div class="row"><div class="col" style="flex:1"><ul class="pts">
+<li class="fade"><b>Universe:</b> 300 NSE stocks (Nifty 100 + Midcap 100 + Smallcap 100), 2020 - 2026.</li>
+<li class="fade d1"><b>Rules:</b> at most 10 stocks, Rs 1 crore capital, 0.1% cost per trade side, Rs 2 crore minimum daily turnover.</li>
+<li class="fade d2"><b>Method:</b> test many ideas, fix the rules using validation data, then check them on data that was not used in the design.</li>
+<li class="fade d3"><b>Aim:</b> a method with no look-ahead, with costs included, that others can repeat.</li></ul></div>
+<div class="col card soft" style="flex:.9;justify-content:center">
+<div class="fn fade" style="background:#14325c;width:100%"><b>300 stocks</b>liquidity and data checks</div>
+<div class="fn fade d1" style="background:#1d4a85;width:88%"><b>13 signals</b>8 factors &middot; 3 ML / DL models &middot; 2 blends</div>
+<div class="fn fade d2" style="background:#2563eb;width:76%"><b>130 test cells</b>signals x 5 frequencies x 2 buffer settings</div>
+<div class="fn fade d3" style="background:#0a8f7a;width:64%"><b>Top 3 signals</b>average rank (validation data only)</div>
+<div class="fn fade d4" style="background:#087a69;width:52%;margin-bottom:0"><b>10 stocks</b>quarterly, equal weight</div></div></div></div>
+__FTR3__</section>
+
+<!-- 4 STRATEGY SEARCH -->
+<section class="slide" data-i="3">__HDR__
+<div class="body"><div class="kick">2 &middot; Strategy search</div><h2>13 strategies tested; <em>3 chosen on validation data</em></h2>
+<div class="row" style="margin-top:22px"><div class="card col" style="flex:1"><div class="ctitle">Mean validation Sharpe ratio over 5 rebalancing frequencies</div><div class="cv"><canvas id="c_sig"></canvas></div>
+<div class="cap">Validation period 2022-01 to 2024-06. Outlined bars: the top 3, rank-averaged into one signal.</div></div>
+<div class="card col" style="flex:1.12;padding:14px 24px 12px">__SIGTABLE__
+<div class="cap" style="margin-top:6px"><b>Rank IC 21d:</b> correlation with the next 21-day return. <b>Max DD:</b> mean over 5 frequencies.</div></div></div></div>
+__FTR4__</section>
+
+<!-- 5 ML DL RL -->
+<section class="slide" data-i="4">__HDR__
+<div class="body"><div class="kick">2 &middot; Strategy search &middot; ML, DL and RL</div><h2>ML and DL as signals; <em>RL as exposure control</em></h2>
+<div class="row" style="margin-top:22px"><div class="card col" style="flex:1.2"><div class="ctitle">Learning models compared on validation data</div>__MLTABLE__
+<div class="cap" style="margin-top:14px"><b>Method:</b> models are retrained every 63 days using only past data. Targets: return over the next 5, 21 and 63 days. RL: Q-learning chooses 0%, 50% or 100% market exposure from trend and volatility state.</div>
+<div style="margin-top:auto;font-size:23px;color:var(--navy);line-height:1.4;padding-top:14px"><b>Result:</b> the neural net enters the final blend. The other ML models and the RL overlay did not improve results.</div></div>
+<div class="card col" style="flex:1"><div class="ctitle">RL overlay: Sharpe ratio, Feb 2023 onward</div><div style="height:300px;position:relative"><canvas id="c_rl" style="position:absolute;inset:0;width:100%;height:100%"></canvas></div>
+<div style="margin-top:22px">__RLTABLE__</div>
+<div class="cap">Exposure: average share of capital invested.</div></div></div></div>
+__FTR5__</section>
+
+<!-- 5 PROTOCOL -->
+<section class="slide" data-i="5">__HDR__
+<div class="body"><div class="kick">3 &middot; Validation method</div><h2>Design on one period. <em>Test on another.</em></h2>
+<div class="tl" style="margin-top:34px"><div style="background:#cbd5e1;color:#1e293b;flex:2">Training<br>2020 - 2021</div><div style="background:#2563eb;color:#fff;flex:5">Validation: design is fixed here<br>2022-01 to 2024-06</div><div style="background:#d97706;color:#fff;flex:5">Holdout: rules fixed before testing<br>2024-07 to 2026-10</div></div>
+<div class="row"><div class="col" style="flex:1"><ul class="pts">
+<li class="fade"><b>Walk-forward ML:</b> the training window grows over time. Models are retrained every 63 days. A gap is kept between training labels and test data.</li>
+<li class="fade d1"><b>Rules fixed first:</b> the best 3 signals and the rebalancing frequency are chosen by validation Sharpe ratio.</li>
+<li class="fade d2"><b>Extra features are used only if</b> validation Sharpe ratio and drawdown both improve.</li></ul></div>
+<div class="col card soft" style="flex:.85;justify-content:center;gap:26px"><div class="ctitle" style="margin:0">Why this matters: testing 100+ variants overstates in-sample results</div>
+<div class="kpis k3" style="gap:16px"><div><div style="font-size:54px;font-weight:800;color:var(--blue)">63d</div><div style="font-size:20px;color:var(--mute)">days between retraining</div></div><div><div style="font-size:54px;font-weight:800;color:var(--teal)">H+2d</div><div style="font-size:20px;color:var(--mute)">days gap before test</div></div><div><div style="font-size:54px;font-weight:800;color:var(--amber)">138</div><div style="font-size:20px;color:var(--mute)">trials in deflated Sharpe</div></div></div>
+<div style="font-size:24px;line-height:1.45;color:#26364f">A <b>holdout period</b> and a <b>deflated Sharpe ratio</b> correct for choosing the best of many tests.</div></div></div></div>
+__FTR6__</section>
+
+<!-- 6 SIGNALS -->
+<section class="slide" data-i="6">__HDR__
+<div class="body"><div class="kick">4 &middot; Signal research</div><h2>Predictive power grows <em>over weeks</em>, not days</h2>
+<div class="row"><div class="card col" style="flex:1.35"><div class="ctitle">Rank IC by holding period (validation period)</div><div class="cv"><canvas id="c_ic"></canvas></div>
+<div class="cap">Rank IC is the Spearman correlation between the signal and the later return. Validation period: 2022-01 to 2024-06.</div></div>
+<div class="col" style="flex:1;justify-content:center"><ul class="pts">
+<li class="fade"><b>Rank IC &asymp; 0.005 at 1 day,</b> &asymp; 0.05 at 21 days: so there is no useful daily signal.</li>
+<li class="fade d1"><b>ML and DL models</b> were not better than simple factors at 21 days.</li>
+<li class="fade d2"><b>So we combine</b> momentum, MLP and risk-adjusted momentum to reduce reliance on one model.</li></ul></div></div></div>
+__FTR7__</section>
+
+<!-- 7 FREQUENCY -->
+<section class="slide" data-i="7">__HDR__
+<div class="body"><div class="kick">5 &middot; Rebalancing frequency</div><h2>Quarterly: highest Sharpe ratio with <em>one-twentieth of the turnover</em></h2>
+<div class="row"><div class="card col" style="flex:1.35"><div class="ctitle">Mean Sharpe across 13 signals, by rebalancing frequency</div><div class="cv"><canvas id="c_freq"></canvas></div>
+<div class="cap">Labels show yearly one-way turnover as a multiple of portfolio value (validation period).</div></div>
+<div class="col" style="flex:1;justify-content:center"><ul class="pts">
+<li class="fade"><b>Daily trading</b> has about 20 times the turnover and no better prediction.</li>
+<li class="fade d1"><b>Practical reasons:</b> signals fade slowly, results are reported every quarter, mid and small caps trade thinly, and costs add up.</li>
+<li class="fade d2"><b>Plan:</b> split the portfolio into three parts, one month apart, so the result does not depend on one date.</li></ul></div></div></div>
+__FTR8__</section>
+
+<!-- 8 WEIGHTS -->
+<section class="slide" data-i="8">__HDR__
+<div class="body"><div class="kick">6 &middot; Portfolio construction</div><h2>Markowitz, risk parity and CAPM tested; <em>equal weight kept</em></h2>
+<div class="row"><div class="card col" style="flex:1.35"><div class="ctitle">Sharpe ratio by weighting method (quarterly, 20% cap, Ledoit-Wolf covariance)</div><div class="cv"><canvas id="c_w"></canvas></div>
+<div class="cap">Rule: validation Sharpe ratio and drawdown must both improve.</div></div>
+<div class="col" style="flex:1;justify-content:center"><ul class="pts">
+<li class="fade"><b>No method passed</b> the rule at quarterly frequency.</li>
+<li class="fade d1"><b>Estimation error</b> is large with 10 stocks. Covariances are noisy and return forecasts are weak.</li>
+<li class="fade d2"><b>CAPM was the worst:</b> beta does not explain mid and small cap returns. Minimum variance will be tested on future data.</li></ul></div></div></div>
+__FTR9__</section>
+
+<!-- 9 ROBUSTNESS -->
+<section class="slide" data-i="9">__HDR__
+<div class="body"><div class="kick">7 &middot; Robustness tests</div><h2>We tested the result <em>against chance</em></h2>
+<div class="kpis k4" style="margin-top:26px">
+<div class="card kpi g"><div class="n" data-count="__BOOT__" data-dec="0" data-suf="%">0</div><div class="l">bootstrap samples with positive excess return</div></div>
+<div class="card kpi g"><div class="n" data-count="__R6__" data-dec="0" data-suf="%">0</div><div class="l">rolling 6-month windows beating benchmark</div></div>
+<div class="card kpi"><div class="n" data-count="__PCT__" data-dec="0" data-suf="th">0</div><div class="l">percentile among 300 random 10-stock portfolios</div></div>
+<div class="card kpi a"><div class="n" data-count="__DSR__" data-dec="2">0</div><div class="l">deflated Sharpe probability (__TRIALS__ trials)</div></div></div>
+<div class="row" style="margin-top:24px"><div class="card col" style="flex:1.2"><div class="ctitle">Strategy Sharpe ratio vs 300 random quarterly portfolios</div><div class="cv"><canvas id="c_pl"></canvas></div>
+</div>
+<div class="col" style="flex:1;justify-content:center"><ul class="pts"><li class="fade"><b>Better than most random portfolios,</b> but not by a large margin. The edge is moderate.</li>
+<li class="fade d1"><b>The holdout (2024-07 to 2026-10) was weak:</b> __HOLD__% vs __HOLDB__% for the benchmark. We report it as a stress test.</li></ul></div></div></div>
+__FTR10__</section>
+
+<!-- 10 RESULT -->
+<section class="slide" data-i="10">__HDR__
+<div class="body"><div class="kick">8 &middot; Final result &middot; competition window 1 Jan - 30 Jun 2026</div><h2>Out-of-sample return of <em>__H1RET_T__</em> in the competition window</h2>
+<div class="row"><div class="card col" style="flex:1.2"><div class="ctitle">Growth of 1 (net of costs)</div><div class="cv"><canvas id="c_h1"></canvas></div>
+<div class="cap">This period is inside the holdout. Rules were fixed on validation data.</div>
+<div style="display:flex;gap:44px;margin-top:14px;font-size:22px;color:#26364f"><span>Net profit <b class="good">Rs __NET__</b></span><span>Sharpe <b>__H1SH__</b></span><span>Maximum drawdown <b>__H1DD__</b></span></div></div>
+<div class="card col" style="flex:1"><div class="ctitle">Profit contribution by stock (Rs lakh)</div><div class="cv"><canvas id="c_contrib"></canvas></div>
+<div class="cap">Two portfolios (2 Jan and 1 Apr), 10 stocks each at 10%.</div></div></div></div>
+__FTR11__</section>
+
+<!-- 11 REGIMES -->
+<section class="slide" data-i="11">__HDR__
+<div class="body"><div class="kick">8 &middot; Final result &middot; each year</div><h2>Ahead in four of five years; <em>2025 was the weak year</em></h2>
+<div class="row"><div class="card col" style="flex:1"><div class="ctitle">Calendar-year return, %</div><div class="cv"><canvas id="c_yr"></canvas></div>
+<div class="cap">2026 = year to date (Oct).</div></div>
+<div class="card col" style="flex:1.25"><div class="ctitle">Growth of 1, 2022 - 2026 (holdout shaded)</div><div class="cv"><canvas id="c_cum"></canvas></div>
+<div class="cap">Weekly sampling. CAGR full window: <b>__FCAGR__%</b> vs __FB__% benchmark.</div></div></div>
+<div class="card soft fade d3" style="margin-top:22px;font-size:24px;color:var(--navy)"><b>Note:</b> a momentum edge depends on market conditions (2025: -11.8% vs +8.3%). We reduce this risk by splitting rebalances into three parts and reviewing the strategy regularly.</div></div>
+__FTR12__</section>
+
+<!-- 12 CONCLUSION -->
+<section class="slide" data-i="12">__HDR__
+<div class="body"><div class="kick">Conclusion</div><h2>Each decision, <em>its evidence and its result</em></h2>
+<div class="row"><div class="card" style="flex:1.45;padding-top:14px;padding-bottom:10px"><table class="cmp">
+<tr><th>Decision</th><th>Evidence</th><th>Result</th></tr>
+<tr><td>Signals</td><td>13 signals set in advance; IC and validation Sharpe ratio</td><td><span class="tag t-ok">3-signal blend</span></td></tr>
+<tr><td>Frequency</td><td>Turnover, cost, signal decay</td><td><span class="tag t-ok">Quarterly</span></td></tr>
+<tr><td>Weights</td><td>Markowitz, risk parity, CAPM vs equal</td><td><span class="tag t-ok">Equal</span></td></tr>
+<tr><td>RL exposure control</td><td>Walk-forward Q-learning on market states</td><td><span class="tag t-warn">Rejected</span></td></tr>
+<tr><td>Costs and liquidity</td><td>0.1% per trade side; Rs 2 cr minimum turnover</td><td><span class="tag t-ok">Included</span></td></tr>
+<tr><td>Strength of edge</td><td>Holdout, random portfolios, deflated Sharpe</td><td><span class="tag t-info">Moderate</span></td></tr></table></div>
+<div class="col" style="flex:1;justify-content:center"><div class="ctitle" style="font-size:24px">Next 90 days</div><ul class="pts">
+<li class="fade"><b>Test on new data</b> with rebalancing in three parts.</li>
+<li class="fade d1"><b>Options to test:</b> 15 - 20 stocks and minimum-variance weights.</li>
+<li class="fade d2"><b>Data cleaning:</b> correct the 2021 prices and check corporate actions.</li></ul></div></div>
+<div class="card soft fade d4" style="margin-top:20px;font-size:26px;color:var(--navy);text-align:center"><b>Team Quantify:</b> a sound method that can be repeated, with a moderate measured edge. Thank you.</div></div>
+__FTR13__</section>
+</div>
+
+<script>
+const D=__DATA__,N=__N__;document.querySelectorAll('.lgs').forEach(e=>e.innerHTML=__LOGOJS__);
+const $=s=>document.querySelector(s),stage=$('#stage'),slides=[...document.querySelectorAll('.slide')];let cur=0,SC=1;
+function fit(){SC=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform='translate(-50%,-50%) scale('+SC+')';stage.style.left='50%';stage.style.top='50%';stage.style.transformOrigin='center center'}fit();
+const C={teal:'#0a8f7a',blue:'#2563eb',navy:'#14325c',amber:'#d97706',red:'#c0392b',grey:'#94a3b8',mute:'#5b6b84',grid:'#e2e8f0',ink:'#26364f'};
+const FONT='Inter,"Segoe UI",sans-serif';
+function setup(id){const cv=document.getElementById(id),p=cv.parentElement,w=p.clientWidth,h=p.clientHeight,k=Math.max(1,SC*(devicePixelRatio||1));cv.width=w*k;cv.height=h*k;const g=cv.getContext('2d');g.setTransform(k,0,0,k,0,0);return{g,w,h}}
+const ease=t=>1-Math.pow(1-t,3);const tok={};
+function anim(id,fn,ms=1300){const t=tok[id]=(tok[id]||0)+1;let t0=null;(function f(now){if(tok[id]!==t)return;if(!t0)t0=now;const p=Math.min(1,(now-t0)/ms);fn(ease(p));if(p<1)requestAnimationFrame(f)})(performance.now())}
+function nice(a,b,n=5){const raw=(b-a)/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,st=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p,lo=Math.floor(a/st+1e-9)*st,hi=Math.ceil(b/st-1e-9)*st;return{a:lo,b:hi,n:Math.round((hi-lo)/st)}}
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function monthTicks(dates,every){const out=[];let last='';dates.forEach((d,i)=>{const ym=d.slice(0,7),m=+d.slice(5,7);if(ym!==last){last=ym;if((m-1)%every===0)out.push([i,MN[m-1]+' '+d.slice(2,4)])}});return out}
+function axes(g,w,h,m,a,b,fmt,ticks=5){g.strokeStyle=C.grid;g.fillStyle=C.mute;g.font='18px '+FONT;g.lineWidth=1;g.textAlign='right';for(let i=0;i<=ticks;i++){const v=a+(b-a)*i/ticks,y=h-m.b-(h-m.t-m.b)*i/ticks;g.beginPath();g.moveTo(m.l,y);g.lineTo(w-m.r,y);g.stroke();g.fillText(fmt(v),m.l-8,y+6)}}
+function legend(g,m,items){let x=m.l+4;g.textAlign='left';g.font='19px '+FONT;items.forEach(([n,c])=>{g.fillStyle=c;g.fillRect(x,8,22,10);g.fillStyle=C.ink;g.fillText(n,x+30,19);x+=g.measureText(n).width+62})}
+function lineChart(id,dates,series,o={}){const{g,w,h}=setup(id),m={l:70,r:o.endLabel?90:20,t:o.noLegend?16:44,b:42},all=series.flatMap(s=>s.v),nz=nice(Math.min(...all)*.99,Math.max(...all)*1.01),a=nz.a,b=nz.b,n=dates.length;
+ anim(id,p=>{g.clearRect(0,0,w,h);axes(g,w,h,m,a,b,v=>v.toFixed(2),nz.n);
+  if(o.shade){const i0=dates.findIndex(d=>d>=o.shade),x0=m.l+(w-m.l-m.r)*i0/(n-1);g.fillStyle='#d9770618';g.fillRect(x0,m.t,w-m.r-x0,h-m.t-m.b);g.fillStyle=C.amber;g.textAlign='left';g.font='bold 18px '+FONT;g.fillText('Holdout',x0+12,h-m.b-14)}
+  g.fillStyle=C.mute;g.textAlign='center';g.font='18px '+FONT;monthTicks(dates,o.every||1).forEach(([i,l])=>g.fillText(l,m.l+(w-m.l-m.r)*i/(n-1),h-12));
+  const k=Math.floor((n-1)*p);series.forEach(s=>{g.beginPath();g.lineWidth=s.w||3;g.strokeStyle=s.c;g.lineJoin='round';for(let i=0;i<=k;i++){const x=m.l+(w-m.l-m.r)*i/(n-1),y=h-m.b-(h-m.t-m.b)*(s.v[i]-a)/(b-a);i?g.lineTo(x,y):g.moveTo(x,y)}g.stroke();
+   if(o.endLabel&&p>.98){const y=h-m.b-(h-m.t-m.b)*(s.v[n-1]-a)/(b-a);g.fillStyle=s.c;g.textAlign='left';g.font='bold 20px '+FONT;g.fillText((s.v[n-1]>=1&&o.pct?'+':'')+(o.pct?((s.v[n-1]-1)*100).toFixed(1)+'%':s.v[n-1].toFixed(2)),w-m.r+8,y+6)}});
+  if(!o.noLegend)legend(g,m,series.map(s=>[s.n,s.c]))})}
+function barH(id,items,unit,dec){const{g,w,h}=setup(id),n=items.length,mx=Math.max(...items.map(i=>Math.abs(i.v))),lab=200,hasNeg=items.some(i=>i.v<0),zero=lab+(w-lab-30)*(hasNeg?.2:0),rowH=h/n,sc=(w-zero-80)/mx,scN=(zero-lab-70)/Math.max(...items.map(i=>Math.max(0,-i.v)),1e-9);
+ anim(id,p=>{g.clearRect(0,0,w,h);items.forEach((it,i)=>{const y=i*rowH,len=it.v*(it.v<0?scN:sc)*p;g.fillStyle=C.ink;g.textAlign='right';g.font='19px '+FONT;g.fillText(it.s,lab-12,y+rowH*.66);g.fillStyle=it.v<0?C.red:C.teal;g.fillRect(zero,y+rowH*.16,len,rowH*.66);
+  g.fillStyle=C.ink;g.font='bold 19px '+FONT;g.textAlign=it.v<0?'right':'left';g.fillText((it.v>0?'+':'')+it.v.toFixed(dec!=null?dec:(Math.abs(it.v)<.1?2:1))+unit,zero+len+(it.v<0?-8:8),y+rowH*.66)});g.strokeStyle=C.mute;g.lineWidth=1.5;g.beginPath();g.moveTo(zero,0);g.lineTo(zero,h);g.stroke()})}
+function groupBars(id,labels,series,fmt,o={}){const{g,w,h}=setup(id),m={l:70,r:20,t:48,b:46},flat=series.flatMap(s=>s.v),nz=nice(Math.min(0,...flat)*1.15,Math.max(...flat)*1.15),a=nz.a,b=nz.b,ns=series.length;
+ anim(id,p=>{g.clearRect(0,0,w,h);axes(g,w,h,m,a,b,fmt,nz.n);const gw=(w-m.l-m.r)/labels.length,y0=h-m.b-(h-m.t-m.b)*(0-a)/(b-a);
+  labels.forEach((l,i)=>{const bw=gw*.72/ns,x=m.l+gw*i+gw*.14;series.forEach((s,j)=>{const v=s.v[i],hh=(h-m.t-m.b)*v/(b-a)*p;g.fillStyle=s.c;g.fillRect(x+j*bw,y0-Math.max(hh,0),bw-5,Math.abs(hh));g.fillStyle=C.ink;g.textAlign='center';g.font='bold 18px '+FONT;g.fillText(fmt(v),x+j*bw+bw/2-2,hh>=0?y0-hh-8:y0-hh+22)});g.fillStyle=C.mute;g.font='19px '+FONT;g.textAlign='center';g.fillText(l,m.l+gw*i+gw/2,h-14)});
+  g.strokeStyle=C.mute;g.beginPath();g.moveTo(m.l,y0);g.lineTo(w-m.r,y0);g.stroke();legend(g,m,series.map(s=>[s.n,s.c]))})}
+function icChart(){const id='c_ic',{g,w,h}=setup(id),m={l:70,r:30,t:48,b:46},hz=['1d','5d','21d','63d','126d'],cols=[C.grey,C.amber,C.blue,C.red,C.teal],mx=0.12;
+ anim(id,p=>{g.clearRect(0,0,w,h);axes(g,w,h,m,0,mx,v=>v.toFixed(2),6);g.fillStyle=C.mute;g.textAlign='center';g.font='19px '+FONT;hz.forEach((t,i)=>g.fillText(t,m.l+(w-m.l-m.r)*i/4,h-14));
+  D.ic.forEach((s,k)=>{g.beginPath();g.strokeStyle=cols[k];g.lineWidth=3.5;s.v.forEach((v,i)=>{const x=m.l+(w-m.l-m.r)*i/4,y=h-m.b-(h-m.t-m.b)*(Math.max(0,v)/mx)*p;i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();s.v.forEach((v,i)=>{const x=m.l+(w-m.l-m.r)*i/4,y=h-m.b-(h-m.t-m.b)*(Math.max(0,v)/mx)*p;g.fillStyle=cols[k];g.beginPath();g.arc(x,y,5,0,7);g.fill()})});
+  g.font='17px '+FONT;let x=m.l+4;g.textAlign='left';D.ic.forEach((s,k)=>{g.fillStyle=cols[k];g.fillRect(x,8,20,10);g.fillStyle=C.ink;g.fillText(s.n,x+27,19);x+=g.measureText(s.n).width+50})})}
+function histChart(){const id='c_pl',{g,w,h}=setup(id),m={l:60,r:20,t:48,b:50},xs=D.placebo.sharpe,mn=Math.min(...xs),mx=Math.max(...xs,D.placebo.strat)+.05,bins=26,cnt=Array(bins).fill(0);xs.forEach(v=>cnt[Math.min(bins-1,Math.floor((v-mn)/(mx-mn)*bins))]++);const cm=Math.max(...cnt);
+ anim(id,p=>{g.clearRect(0,0,w,h);const bw=(w-m.l-m.r)/bins;cnt.forEach((c,i)=>{const hh=(h-m.t-m.b)*c/cm*p;g.fillStyle='#b6c2d6';g.fillRect(m.l+i*bw+2,h-m.b-hh,bw-4,hh)});
+  g.strokeStyle=C.grid;g.beginPath();g.moveTo(m.l,h-m.b);g.lineTo(w-m.r,h-m.b);g.stroke();
+  g.fillStyle=C.mute;g.font='18px '+FONT;g.textAlign='center';for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4;g.fillText(v.toFixed(2),m.l+(w-m.l-m.r)*i/4,h-24)}g.fillText('Sharpe ratio',m.l+(w-m.l-m.r)/2,h-4);
+  const sx=m.l+(w-m.l-m.r)*(D.placebo.strat-mn)/(mx-mn);g.strokeStyle=C.teal;g.lineWidth=4;g.beginPath();g.moveTo(sx,m.t);g.lineTo(sx,h-m.b);g.stroke();g.fillStyle=C.teal;g.textAlign='center';g.font='bold 20px '+FONT;g.fillText('Strategy '+D.placebo.strat.toFixed(2),Math.min(sx,w-110),m.t-12);
+  g.fillStyle=C.mute;g.textAlign='left';g.font='18px '+FONT;g.fillText('Random portfolios (n=300)',m.l,m.t-12)})}
+function wChart(){const id='c_w',{g,w,h}=setup(id),m={l:60,r:20,t:48,b:70},it=D.weights,mx=2.5;
+ anim(id,p=>{g.clearRect(0,0,w,h);axes(g,w,h,m,0,mx,v=>v.toFixed(1));const gw=(w-m.l-m.r)/it.length;it.forEach((x,i)=>{const xx=m.l+gw*i+gw*.12,bw=gw*.38;[[x.vs,C.blue,x.vs],[Math.max(x.hs,0),C.amber,x.hs]].forEach(([v,c,lab],j)=>{const hh=(h-m.t-m.b)*v/mx*p;g.fillStyle=c;g.fillRect(xx+j*bw,h-m.b-hh,bw-4,hh);g.fillStyle=C.ink;g.textAlign='center';g.font='bold 18px '+FONT;g.fillText(lab.toFixed(2),xx+j*bw+bw/2-2,h-m.b-hh-8)});
+  g.fillStyle=C.ink;g.font='18px '+FONT;g.textAlign='center';const parts=x.n.split(' ');g.fillText(parts[0],m.l+gw*i+gw/2,h-m.b+26);if(parts[1])g.fillText(parts[1],m.l+gw*i+gw/2,h-m.b+48)});
+  legend(g,m,[['Validation Sharpe',C.blue],['Holdout Sharpe',C.amber]])})}
+function freqChart(){const id='c_freq',{g,w,h}=setup(id),m={l:60,r:20,t:48,b:80},it=D.freq,mx=2.5,mn=-.5;
+ anim(id,p=>{g.clearRect(0,0,w,h);axes(g,w,h,m,mn,mx,v=>v.toFixed(1),6);const gw=(w-m.l-m.r)/it.length,y0=h-m.b-(h-m.t-m.b)*(0-mn)/(mx-mn);it.forEach((x,i)=>{const xx=m.l+gw*i+gw*.12,bw=gw*.38;[[x.v,C.blue],[x.h,C.amber]].forEach(([v,c],j)=>{const hh=(h-m.t-m.b)*v/(mx-mn)*p;g.fillStyle=c;g.fillRect(xx+j*bw,y0-Math.max(hh,0),bw-4,Math.abs(hh));g.fillStyle=C.ink;g.textAlign='center';g.font='bold 18px '+FONT;g.fillText(v.toFixed(2),xx+j*bw+bw/2-2,v>=0?y0-hh-8:y0-hh+22)});
+  g.fillStyle=C.ink;g.textAlign='center';g.font='bold 19px '+FONT;g.fillText(x.f,m.l+gw*i+gw/2,h-m.b+30);g.fillStyle=C.mute;g.font='17px '+FONT;g.fillText(x.t+'x turnover',m.l+gw*i+gw/2,h-m.b+56)});
+  legend(g,m,[['Validation mean Sharpe',C.blue],['Holdout mean Sharpe',C.amber]])})}
+function sigChart(){const id='c_sig',{g,w,h}=setup(id),it=D.sig,n=it.length,lab=260,rowH=(h-40)/n,mx=2.5,sc=(w-lab-70)/mx,col={'Factor':C.blue,'ML':C.teal,'DL':'#7c3aed','ML + DL':C.teal,'Blend':C.grey};
+ anim(id,p=>{g.clearRect(0,0,w,h);const lg=[['Factor',C.blue],['ML',C.teal],['DL','#7c3aed'],['Blend',C.grey]];let lx=lab;g.font='18px '+FONT;g.textAlign='left';lg.forEach(([a,c])=>{g.fillStyle=c;g.fillRect(lx,8,18,12);g.fillStyle=C.ink;g.fillText(a,lx+26,20);lx+=g.measureText(a).width+56});
+  it.forEach((x,i)=>{const y=40+i*rowH,len=x.v*sc*p;g.fillStyle=C.ink;g.textAlign='right';g.font=(x.pick?'bold ':'')+'19px '+FONT;g.fillText(x.n,lab-12,y+rowH*.66);g.fillStyle=col[x.t];g.fillRect(lab,y+rowH*.14,len,rowH*.68);if(x.pick){g.strokeStyle=C.navy;g.lineWidth=3;g.strokeRect(lab,y+rowH*.14,len,rowH*.68)}
+   g.fillStyle=C.ink;g.font='bold 19px '+FONT;g.textAlign='left';g.fillText(x.v.toFixed(2),lab+len+8,y+rowH*.66)});
+  g.strokeStyle=C.mute;g.lineWidth=1.5;g.beginPath();g.moveTo(lab,32);g.lineTo(lab,h);g.stroke()})}
+function counters(s){s.querySelectorAll('[data-count]').forEach(el=>{const v=+el.dataset.count,dec=+el.dataset.dec||0,suf=el.dataset.suf||'',pre=el.dataset.pre||'';let t0=null;(function f(t){if(!t0)t0=t;const p=Math.min(1,(t-t0)/1400);el.textContent=pre+(v*ease(p)).toFixed(dec)+suf;if(p<1)requestAnimationFrame(f)})(performance.now())})}
+function draw(i){counters(slides[i]);
+ if(i===0)lineChart('c_t',D.h1.dates,[{n:'Strategy',c:C.teal,v:D.h1.strategy,w:4},{n:'Benchmark',c:C.grey,v:D.h1.bench,w:3}],{full:false,endLabel:true,pct:true});
+ if(i===3)sigChart();if(i===4){barH('c_rl',D.rl.map(x=>({s:x.n.replace('Core3 Q','Strategy'),v:x.sh})),'',2)}
+ if(i===6)icChart();if(i===7)freqChart();if(i===8)wChart();if(i===9)histChart();
+ if(i===10){lineChart('c_h1',D.h1.dates,[{n:'Strategy',c:C.teal,v:D.h1.strategy,w:4}],{endLabel:true,pct:true,every:1});barH('c_contrib',D.contrib.map(x=>({s:x.s,v:x.v})),'')}
+ if(i===11){groupBars('c_yr',D.years.map(y=>y.y),[{n:'Strategy',c:C.teal,v:D.years.map(y=>y.s)},{n:'Benchmark',c:C.grey,v:D.years.map(y=>y.b)}],v=>v.toFixed(0)+'%');
+  lineChart('c_cum',D.cum.dates,[{n:'Strategy',c:C.teal,v:D.cum.strategy,w:3.5},{n:'Equal-weight benchmark',c:C.grey,v:D.cum.bench,w:3}],{shade:'2024-07-01',every:6})}}
+function go(n){n=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>{s.classList.toggle('active',i===n);s.classList.toggle('past',i<n)});cur=n;history.replaceState(null,'','#'+(n+1));setTimeout(()=>draw(n),120)}
+document.querySelectorAll('[data-go]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();go(+e.dataset.go)});
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(cur+1)}if(['ArrowLeft','PageUp','Backspace'].includes(e.key))go(cur-1);if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1);if(e.key==='i'||e.key==='I')go(1);if(e.key==='f'||e.key==='F')document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()});
+stage.addEventListener('click',e=>{if(e.target.closest('.it'))return;const r=stage.getBoundingClientRect();go(cur+(e.clientX-r.left<r.width*.25?-1:1))});
+let tx=0;addEventListener('touchstart',e=>tx=e.touches[0].clientX);addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)go(cur+(d<0?1:-1))});
+addEventListener('resize',()=>{fit();draw(cur)});
+go(Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1))||1)-1)));
+</script></body></html>

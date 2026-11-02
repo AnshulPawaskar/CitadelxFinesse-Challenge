@@ -9,7 +9,7 @@ from src.battle.data import BATTLE_DIR
 from src.battle.design import trend_overlay
 from src.battle.engine import metrics, run_backtest
 
-FINAL = dict(signal="core3", freq="Q")
+FINAL = dict(signal="core3", freq="S")
 N_TRIALS = 130 + 8  # grid cells + design variants examined before the choice was frozen
 
 
@@ -96,9 +96,10 @@ def run(ctx):
     # --- comparators over the whole walk-forward OOS window (continuous NAV) -----------------------------
     runs = {}
     for label, sig, f, kw in [
-        ("FINAL core3 | Quarterly", "core3", "Q", {}),
+        ("FINAL core3 | Half-yearly", "core3", "S", {}),
+        ("core3 | Quarterly", "core3", "Q", {}),
         ("core3 | Daily", "core3", "D", {}), ("core3 | Weekly", "core3", "W", {}),
-        ("core3 | Monthly", "core3", "M", {}), ("core3 | Half-yearly", "core3", "S", {}),
+        ("core3 | Monthly", "core3", "M", {}),
         ("core3 | Static (no rebalance)", "core3", "N", {}),
         ("Original composite_quantitative | Static", "composite_quantitative", "N", {}),
         ("composite_quantitative | Quarterly", "composite_quantitative", "Q", {}),
@@ -114,7 +115,7 @@ def run(ctx):
     summ = pd.DataFrame(rows)
     summ.to_csv(BATTLE_DIR / "strategy_summary.csv", index=False)
 
-    final_ret, final_run = runs["FINAL core3 | Quarterly"]
+    final_ret, final_run = runs["FINAL core3 | Half-yearly"]
     pd.DataFrame({"Strategy": final_ret, "Benchmark": bench.loc[final_ret.index]}).to_csv(BATTLE_DIR / "final_daily_returns.csv")
 
     # --- own out-of-sample periods -------------------------------------------------------------------
@@ -147,7 +148,7 @@ def run(ctx):
     pl_rows = []
     for i in range(300):
         rnd = rng.random(mkt.close.shape)
-        r = run_backtest(mkt, rnd, "Q", oos[0], oos[1])
+        r = run_backtest(mkt, rnd, FINAL["freq"], oos[0], oos[1])
         m = metrics(r.returns, r.dates)
         pl_rows.append({"Sharpe": m["Sharpe"], "CAGR": m["CAGR"], "MaxDD": m["MaxDD"]})
     placebo = pd.DataFrame(pl_rows)
@@ -157,20 +158,20 @@ def run(ctx):
     # --- sensitivities --------------------------------------------------------------------------------------
     sens = []
     for cost in (0.001, 0.002, 0.003, 0.005):
-        r = run_backtest(mkt, ctx.signal("core3", "Q"), "Q", oos[0], oos[1], cost=cost)
+        r = run_backtest(mkt, ctx.signal("core3", "S"), "S", oos[0], oos[1], cost=cost)
         sens.append({"Test": "Cost per side", "Value": f"{cost:.1%}", **metrics(r.returns, r.dates)})
     for n in (5, 10, 15, 20, 30):
-        r = run_backtest(mkt, ctx.signal("core3", "Q"), "Q", oos[0], oos[1], n=n)
+        r = run_backtest(mkt, ctx.signal("core3", "S"), "S", oos[0], oos[1], n=n)
         sens.append({"Test": "Holdings", "Value": str(n), **metrics(r.returns, r.dates)})
     for adv in (2e7, 5e7, 1e8):
-        r = run_backtest(mkt, ctx.signal("core3", "Q"), "Q", oos[0], oos[1], eligible=mkt.eligible(adv))
+        r = run_backtest(mkt, ctx.signal("core3", "S"), "S", oos[0], oos[1], eligible=mkt.eligible(adv))
         sens.append({"Test": "Min avg daily value (Rs)", "Value": f"{adv / 1e7:.0f} cr", **metrics(r.returns, r.dates)})
-    # shifted rebalance phase: same quarterly frequency, signal computed 20 trading days earlier each quarter
-    score = ctx.signal("core3", "Q")
+    # shifted rebalance phase: same half-yearly frequency, signal computed earlier each period
+    score = ctx.signal("core3", "S")
     for shift in (0, 21, 42):
         sh = np.full_like(score, np.nan)
         sh[shift:] = score[: len(score) - shift] if shift else score
-        r = run_backtest(mkt, sh, "Q", oos[0] + shift, oos[1])
+        r = run_backtest(mkt, sh, "S", oos[0] + shift, oos[1])
         sens.append({"Test": "Stale signal (days)", "Value": str(shift), **metrics(r.returns, r.dates)})
     pd.DataFrame(sens).to_csv(BATTLE_DIR / "sensitivity.csv", index=False)
 

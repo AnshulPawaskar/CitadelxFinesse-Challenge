@@ -1,6 +1,6 @@
 # CitadelxFinesse Challenge — Full Methodology Report
 
-**Team:** Quantify · **Task:** build a static (no-rebalancing) portfolio of at most 10 stocks from the Nifty 100 + Midcap 100 + Smallcap 100 universe, backtest it, and trade it out-of-sample.
+**Team:** Quantify · **Task:** build a portfolio of at most 10 stocks from the Nifty 100 + Midcap 100 + Smallcap 100 universe, backtest it, and trade it out-of-sample.
 
 All figures below come from the files in `results/` and were reproduced from the code in `src/`. Where a conclusion is a judgement rather than something the code proves, it says so.
 
@@ -186,7 +186,7 @@ The design logic (a judgement, not an optimisation):
 
 | Rule | Implementation |
 |---|---|
-| Strategy type | Static: buy once, hold, never rebalance. `validate_no_rebalancing` raises an error if any symbol has more than one trade. |
+| Strategy type | Static: buy once, hold, never rebalance (a design choice). `validate_no_rebalancing` raises an error if any symbol has more than one trade. |
 | Capital | ₹1,00,00,000 |
 | Entry | Open of the first trading day **strictly after** the formation date (`get_entry_price`). No same-day execution. |
 | Transaction cost | 0.1% of each position value, charged once at entry (`shares = (position_value − cost) / entry_price`) |
@@ -362,7 +362,7 @@ Using `momentum_3m` formed on 2021-01-01 (`results/strategy_comparison.csv`):
 | Rebalance 1W | 33.7% | 1.19 | −37.2% |
 | Rebalance 1D | 23.1% | 0.78 | −48.5% |
 
-Frequent rebalancing hurts, mostly because turnover costs and signal noise accumulate. Slow rebalancing (six months) has a better Sharpe and drawdown than static buy and hold but lower CAGR. The competition brief requires a static portfolio, so this was a diagnostic rather than a candidate. Note that the rebalancing engine in `strategy_comparison.py` charges transaction costs only on the portfolio value at each rebalance; treat its figures as indicative.
+Frequent rebalancing hurts, mostly because turnover costs and signal noise accumulate. Slow rebalancing (six months) has a better Sharpe and drawdown than static buy and hold but lower CAGR. Static was our own design choice, not a verified brief requirement, so rebalancing was a legitimate candidate; it was set aside here because of the cost and noise evidence above, and was re-examined with a leak-free walk-forward protocol in `reports/battle_ready_report.html`. Note that the rebalancing engine in `strategy_comparison.py` charges transaction costs only on the portfolio value at each rebalance; treat its figures as indicative.
 
 ---
 
@@ -417,7 +417,7 @@ Each row records what had to be decided, how it was decided, and what was finall
 | # | Stage | Decision to make | How it was decided | Result |
 |---|---|---|---|---|
 | 1 | Setup | Capital, number of holdings, cost, risk-free rate | Given: `INITIAL_CAPITAL` ₹1 cr, `MAX_HOLDINGS` 10, `TRANSACTION_COST_RATE` 0.1%, `RISK_FREE_RATE` 0% in `src/config.py` | Fixed for all backtests |
-| 2 | Setup | Static portfolio or periodic rebalancing | Given (brief requires no rebalancing); rebalancing was still tested as a diagnostic (Section 8.3) | Static buy-and-hold; `validate_no_rebalancing` enforces it |
+| 2 | Setup | Static portfolio or periodic rebalancing | Judgement: static was our own design choice (the repo only records it as a design note; no brief text requiring it was verified). Rebalancing was tested as a diagnostic (Section 8.3) and fully revisited in `reports/battle_ready_report.html` | Static buy-and-hold; `validate_no_rebalancing` enforces it |
 | 3 | Data | Which universe | Given: Nifty 100, Midcap 100, Smallcap 100 lists in `Stocks/` | 300 stocks, NSE EQ series only |
 | 4 | Data | Timeframe | Judgement: daily bars are enough for a hold-for-years strategy, and keep download and storage small | `TIMEFRAME = "1d"` |
 | 5 | Data | Is the data usable as downloaded? | Evidence: audit for nulls, duplicates, invalid OHLC, date range (Section 3.2) | All 300 pass; gaps found (mainly 2024-07-19, FORCEMOT) |
@@ -437,7 +437,7 @@ Each row records what had to be decided, how it was decided, and what was finall
 | 19 | Selection rule | Plain top-N or correlation-filtered | Evidence: 5 thresholds (0.70–0.85, none) across the grid; filter changed only about 18% of cells, with an average Sharpe gain of about 0.003 | Kept plain top-N (simpler, fewer parameters) |
 | 20 | Weighting | Equal, alpha, alpha/vol, inverse-vol or risk-adjusted | Evidence: weighting test on the final model plus the 2,160-run grid (Section 8); differences within about 0.01 Sharpe | Equal weight, 10% each (cap of 20% never binds) |
 | 21 | Weighting | Use Markowitz optimisation? | Evidence: min-variance test on `momentum_3m`, Sharpe 1.42, the same as static | Not used |
-| 22 | Rebalancing | Rebalance at any frequency? | Evidence: 1D/1W/1M/3M/6M versus static; frequent rebalancing was clearly worse and 6M slightly better in Sharpe but lower in CAGR | Not used; also required by the brief |
+| 22 | Rebalancing | Rebalance at any frequency? | Evidence: 1D/1W/1M/3M/6M versus static; frequent rebalancing was clearly worse and 6M slightly better in Sharpe but lower in CAGR | Not used in this report's static design; superseded by the walk-forward study in `reports/battle_ready_report.html` |
 | 23 | Robustness | Do rankings hold across start dates? | Evidence: 9 formation dates, 2021-01 to 2025-01 | Momentum families led on average, and some single-date winners dropped (for example `technical_composite`) |
 | 24 | Robustness | Are lookback windows sensitive? | Evidence: sensitivity sweeps over momentum and trend windows (Section 7.5) | Broad plateau, so blend 3/6/12-month horizons in the final model |
 | 25 | Final model | Which model to submit | Judgement informed by evidence: diversified, momentum-anchored, Sharpe 1.50, not dependent on a single lookback; single-date winners were not consistent across dates | `composite_quantitative` |

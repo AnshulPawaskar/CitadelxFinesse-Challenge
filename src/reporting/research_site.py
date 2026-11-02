@@ -115,7 +115,7 @@ def tables(d):
     pc = lambda x, n=1: f"{x * 100:.{n}f}%"
     fr = "".join(f'<tr{" class=hl" if x["f"] == "Half-yearly" else ""}><td>{x["f"]}</td><td>{x["vs"]:.2f}</td><td>{pc(x["vd"], 0)}</td><td>{x["hs"]:.2f}</td><td>{pc(x["hr"], 0)}</td><td>{pc(x["fc"], 0)}</td><td>{x["t"]:.1f}x</td></tr>' for x in d["fc"])
     fct = '<table class="t2 t3"><tr><th>Rebalance</th><th>Val. Sharpe</th><th>Val. Max DD</th><th>Holdout Sharpe</th><th>Holdout return</th><th>CAGR 2022-26</th><th>Turnover / year</th></tr>' + fr + "</table>"
-    rows = "".join(f'<tr><td>{x["t"]}</td><td>{x["v"]}</td><td>{x["sh"]:.2f}</td><td>{pc(x["dd"], 0)}</td><td>{pc(x["cagr"], 0)}</td></tr>' for x in d["sens"] if x["t"] in ("Cost per side", "Stale signal (days)", "Holdings"))
+    rows = "".join(f'<tr><td>{x["t"]}</td><td>{x["v"]}</td><td>{x["sh"]:.2f}</td><td>{pc(x["dd"], 0)}</td><td>{pc(x["cagr"], 0)}</td></tr>' for x in d["sens"] if x["t"] in ("Cost per side", "Stale signal (days)"))
     stt = '<table class="t2"><tr><th>Test</th><th>Value</th><th>Sharpe</th><th>Max DD</th><th>CAGR</th></tr>' + rows + "</table>"
     rk = "".join(f'<tr><td>{x["RankFinal"]}</td><td>{x["Symbol"]}</td><td>{x["RankMomentum6m"]}</td><td>{x["RankRiskAdjMomentum"]}</td><td>{x["RankMLP"]}</td><td>10%</td><td class="{"good" if x["PnL_Rs"] >= 0 else "bad"}">{x["PnL_Rs"] / 1e5:+.2f}</td></tr>' for x in d["rank"])
     rkt = '<table class="t2 t3"><tr><th>Final rank</th><th>Stock</th><th>Momentum 6m rank</th><th>Risk-adj. momentum rank</th><th>MLP rank</th><th>Weight</th><th>P&amp;L (Rs lakh)</th></tr>' + rk + "</table>"
@@ -126,6 +126,9 @@ def tables(d):
         return f'<td style="background:rgba(37,99,235,{a * .55:.2f});text-align:center;font-weight:{700 if a > .7 else 500}">{v:.2f}</td>'
     ct = '<table class="t2 cm"><tr><th></th>' + "".join(f"<th>{nm[k]}</th>" for k in c["names"]) + "</tr>" + "".join(
         f'<tr><td><b>{nm[k]}</b></td>' + "".join(cell(v) for v in row) + "</tr>" for k, row in zip(c["names"], c["v"])) + "</table>"
+    hr_ = "".join(f'<tr><td>{x["v"]}</td><td>{x["sh"]:.2f}</td><td>{pc(x["dd"], 0)}</td></tr>' for x in d["sens"] if x["t"] == "Holdings")
+    hdt = '<table class="t2"><tr><th>Stocks held</th><th>Sharpe</th><th>Max DD</th></tr>' + hr_ + "</table>"
+    d["_hold"] = hdt
     return sig, mlt, rlt, fct, stt, rkt, ct
 
 
@@ -134,7 +137,7 @@ def main():
     h1, w = d["h1"], d["win"]
     html = TEMPLATE.read_text(encoding="utf-8")
     sg, ml, rt, fct, stt, rkt, ct = tables(d)
-    html = html.replace("__SIGTABLE__", sg).replace("__MLTABLE__", ml).replace("__RLTABLE__", rt).replace("__FCTABLE__", fct).replace("__STABTABLE__", stt).replace("__RANKTABLE__", rkt).replace("__CORRTABLE__", ct)
+    html = html.replace("__SIGTABLE__", sg).replace("__MLTABLE__", ml).replace("__RLTABLE__", rt).replace("__HOLDTABLE__", d["_hold"]).replace("__FCTABLE__", fct).replace("__STABTABLE__", stt).replace("__RANKTABLE__", rkt).replace("__CORRTABLE__", ct)
     n = html.count('<section class="slide')
     logo_html = logo_tag()
     logo = '<span class="lgs" style="display:flex;gap:16px;align-items:center"></span>'

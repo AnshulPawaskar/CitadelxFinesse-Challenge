@@ -25,7 +25,7 @@ cred={
     }
 
 start_date = "2020-01-01"
-end_date = "2026-06-30"
+end_date = "2026-10-31"
 timeframe = "1d"
 
 def year_half(date_str):

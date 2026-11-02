@@ -1277,6 +1277,329 @@ The ML ensemble's quarterly version was the strongest full-period run (Sharpe 1.
   </tbody>
 </table>
 <p>Sharpe changed from 1.02 to 1.21 when the signal was one month stale, which shows the quarterly result is sensitive to the exact rebalance date. A production rule should therefore split capital into tranches rebalanced on different dates (for example monthly tranches each held for three months) to remove timing luck.</p>
+<h2>9a. Does Markowitz / MPT / CAPM weighting improve the selected stocks?</h2>
+<p>The selection (core3) is held fixed and only the weights change at each rebalance. Inputs use trailing 252 days up to the signal date, a Ledoit-Wolf shrunk covariance, a 20% per-name cap and 0.1% cost per side. Mean-variance uses risk aversion 3 and trailing means shrunk halfway to their cross-sectional average; CAPM uses beta x market premium as the return forecast. <span class='tag pre'>pre-registered</span> rule: adopt only if validation Sharpe and max drawdown both beat equal weight. The holdout is reported separately.</p>
+<h3>Quarterly rebalance</h3><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Scheme</th>
+      <th>Validation return</th>
+      <th>Validation Sharpe</th>
+      <th>Validation max DD</th>
+      <th>Holdout (OOS) return</th>
+      <th>Holdout (OOS) Sharpe</th>
+      <th>Holdout (OOS) max DD</th>
+      <th>Full return</th>
+      <th>Full Sharpe</th>
+      <th>Full max DD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Equal weight</td>
+      <td>182.3%</td>
+      <td>1.88</td>
+      <td>-24.8%</td>
+      <td>-0.6%</td>
+      <td>0.11</td>
+      <td>-31.7%</td>
+      <td>183.9%</td>
+      <td>1.02</td>
+      <td>-31.7%</td>
+    </tr>
+    <tr>
+      <td>Inverse volatility</td>
+      <td>170.4%</td>
+      <td>1.83</td>
+      <td>-25.1%</td>
+      <td>0.6%</td>
+      <td>0.13</td>
+      <td>-30.4%</td>
+      <td>175.0%</td>
+      <td>1.01</td>
+      <td>-30.4%</td>
+    </tr>
+    <tr>
+      <td>Min-variance (Ledoit-Wolf)</td>
+      <td>150.6%</td>
+      <td>1.73</td>
+      <td>-26.7%</td>
+      <td>10.1%</td>
+      <td>0.30</td>
+      <td>-27.8%</td>
+      <td>178.8%</td>
+      <td>1.05</td>
+      <td>-27.8%</td>
+    </tr>
+    <tr>
+      <td>Risk parity (Ledoit-Wolf)</td>
+      <td>181.9%</td>
+      <td>1.88</td>
+      <td>-24.8%</td>
+      <td>-0.2%</td>
+      <td>0.12</td>
+      <td>-31.2%</td>
+      <td>184.5%</td>
+      <td>1.03</td>
+      <td>-31.2%</td>
+    </tr>
+    <tr>
+      <td>Mean-variance (shrunk means)</td>
+      <td>194.8%</td>
+      <td>1.86</td>
+      <td>-25.9%</td>
+      <td>2.6%</td>
+      <td>0.18</td>
+      <td>-36.2%</td>
+      <td>203.8%</td>
+      <td>1.03</td>
+      <td>-36.2%</td>
+    </tr>
+    <tr>
+      <td>CAPM mean-variance</td>
+      <td>168.9%</td>
+      <td>1.55</td>
+      <td>-27.3%</td>
+      <td>-5.3%</td>
+      <td>0.05</td>
+      <td>-41.4%</td>
+      <td>159.2%</td>
+      <td>0.86</td>
+      <td>-41.4%</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Monthly rebalance</h3><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Scheme</th>
+      <th>Validation return</th>
+      <th>Validation Sharpe</th>
+      <th>Validation max DD</th>
+      <th>Holdout (OOS) return</th>
+      <th>Holdout (OOS) Sharpe</th>
+      <th>Holdout (OOS) max DD</th>
+      <th>Full return</th>
+      <th>Full Sharpe</th>
+      <th>Full max DD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Equal weight</td>
+      <td>148.1%</td>
+      <td>1.65</td>
+      <td>-29.6%</td>
+      <td>7.2%</td>
+      <td>0.25</td>
+      <td>-32.4%</td>
+      <td>166.4%</td>
+      <td>0.96</td>
+      <td>-32.4%</td>
+    </tr>
+    <tr>
+      <td>Inverse volatility</td>
+      <td>148.8%</td>
+      <td>1.70</td>
+      <td>-29.7%</td>
+      <td>5.7%</td>
+      <td>0.22</td>
+      <td>-32.2%</td>
+      <td>163.5%</td>
+      <td>0.97</td>
+      <td>-32.2%</td>
+    </tr>
+    <tr>
+      <td>Min-variance (Ledoit-Wolf)</td>
+      <td>148.4%</td>
+      <td>1.78</td>
+      <td>-27.5%</td>
+      <td>15.7%</td>
+      <td>0.39</td>
+      <td>-32.3%</td>
+      <td>187.8%</td>
+      <td>1.09</td>
+      <td>-32.3%</td>
+    </tr>
+    <tr>
+      <td>Risk parity (Ledoit-Wolf)</td>
+      <td>148.2%</td>
+      <td>1.66</td>
+      <td>-29.6%</td>
+      <td>7.3%</td>
+      <td>0.25</td>
+      <td>-32.4%</td>
+      <td>166.7%</td>
+      <td>0.96</td>
+      <td>-32.4%</td>
+    </tr>
+    <tr>
+      <td>Mean-variance (shrunk means)</td>
+      <td>170.3%</td>
+      <td>1.68</td>
+      <td>-25.9%</td>
+      <td>6.9%</td>
+      <td>0.24</td>
+      <td>-33.9%</td>
+      <td>188.9%</td>
+      <td>0.96</td>
+      <td>-33.9%</td>
+    </tr>
+    <tr>
+      <td>CAPM mean-variance</td>
+      <td>129.0%</td>
+      <td>1.35</td>
+      <td>-29.5%</td>
+      <td>6.8%</td>
+      <td>0.24</td>
+      <td>-33.1%</td>
+      <td>144.8%</td>
+      <td>0.82</td>
+      <td>-33.1%</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Half-yearly rebalance</h3><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Scheme</th>
+      <th>Validation return</th>
+      <th>Validation Sharpe</th>
+      <th>Validation max DD</th>
+      <th>Holdout (OOS) return</th>
+      <th>Holdout (OOS) Sharpe</th>
+      <th>Holdout (OOS) max DD</th>
+      <th>Full return</th>
+      <th>Full Sharpe</th>
+      <th>Full max DD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Equal weight</td>
+      <td>234.2%</td>
+      <td>2.04</td>
+      <td>-29.3%</td>
+      <td>-6.1%</td>
+      <td>0.01</td>
+      <td>-30.8%</td>
+      <td>371.9%</td>
+      <td>1.43</td>
+      <td>-29.5%</td>
+    </tr>
+    <tr>
+      <td>Inverse volatility</td>
+      <td>208.7%</td>
+      <td>1.93</td>
+      <td>-29.3%</td>
+      <td>-7.2%</td>
+      <td>-0.01</td>
+      <td>-30.4%</td>
+      <td>318.9%</td>
+      <td>1.34</td>
+      <td>-29.3%</td>
+    </tr>
+    <tr>
+      <td>Min-variance (Ledoit-Wolf)</td>
+      <td>165.6%</td>
+      <td>1.71</td>
+      <td>-29.3%</td>
+      <td>-4.6%</td>
+      <td>0.02</td>
+      <td>-28.7%</td>
+      <td>247.5%</td>
+      <td>1.21</td>
+      <td>-29.3%</td>
+    </tr>
+    <tr>
+      <td>Risk parity (Ledoit-Wolf)</td>
+      <td>232.1%</td>
+      <td>2.03</td>
+      <td>-29.3%</td>
+      <td>-5.9%</td>
+      <td>0.01</td>
+      <td>-30.6%</td>
+      <td>368.5%</td>
+      <td>1.42</td>
+      <td>-29.4%</td>
+    </tr>
+    <tr>
+      <td>Mean-variance (shrunk means)</td>
+      <td>349.9%</td>
+      <td>2.39</td>
+      <td>-27.9%</td>
+      <td>9.3%</td>
+      <td>0.28</td>
+      <td>-39.4%</td>
+      <td>597.0%</td>
+      <td>1.63</td>
+      <td>-36.5%</td>
+    </tr>
+    <tr>
+      <td>CAPM mean-variance</td>
+      <td>130.2%</td>
+      <td>1.38</td>
+      <td>-31.8%</td>
+      <td>-11.4%</td>
+      <td>-0.05</td>
+      <td>-40.8%</td>
+      <td>205.2%</td>
+      <td>1.01</td>
+      <td>-33.8%</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Does it help every time? Quarter-by-quarter vs equal weight (quarterly book)</h3><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Scheme</th>
+      <th>Quarters</th>
+      <th>Share of quarters beating equal weight</th>
+      <th>Share with lower volatility</th>
+      <th>Mean quarterly excess return</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CAPM mean-variance</td>
+      <td>20</td>
+      <td>45.0%</td>
+      <td>45.0%</td>
+      <td>-0.26%</td>
+    </tr>
+    <tr>
+      <td>Inverse volatility</td>
+      <td>20</td>
+      <td>45.0%</td>
+      <td>90.0%</td>
+      <td>-0.21%</td>
+    </tr>
+    <tr>
+      <td>Mean-variance (shrunk means)</td>
+      <td>20</td>
+      <td>45.0%</td>
+      <td>25.0%</td>
+      <td>0.66%</td>
+    </tr>
+    <tr>
+      <td>Min-variance (Ledoit-Wolf)</td>
+      <td>20</td>
+      <td>55.0%</td>
+      <td>80.0%</td>
+      <td>-0.25%</td>
+    </tr>
+    <tr>
+      <td>Risk parity (Ledoit-Wolf)</td>
+      <td>20</td>
+      <td>60.0%</td>
+      <td>95.0%</td>
+      <td>0.01%</td>
+    </tr>
+  </tbody>
+</table>
+<p><b>Conclusion.</b> No scheme passes the rule at the final quarterly rebalance, so equal weight stays. Covariance-based schemes (min-variance, risk parity, inverse-vol) lower volatility in most quarters but do not reliably raise return. CAPM was worst in every window, and mean-variance raised drawdown. 
+Min-variance looked best on the holdout, but it was worse on validation, so that is a post-hoc lead. At monthly (min-variance) and half-yearly (mean-variance) frequencies the rule is met, but these are 2 passes out of 15 scheme and frequency combinations, so they need a forward test before adoption.
+The cause is estimation error: 10 stocks and one year of daily data give noisy covariances and nearly useless return forecasts (rank IC about 0.05).</p>
 <h2>10. Decision log for this phase</h2>
 <table class="dataframe">
   <thead>
@@ -1326,6 +1649,11 @@ The ML ensemble's quarterly version was the strongest full-period run (Sharpe 1.
       <td>Does it replicate?</td>
       <td>Holdout, half-year blocks, rolling windows, procedure walk-forward, placebo, bootstrap, deflated Sharpe.</td>
       <td>Weak replicability (Section 8). No claim of reliable alpha.</td>
+    </tr>
+    <tr>
+      <td>Portfolio weighting (Markowitz/MPT/CAPM)</td>
+      <td>Same adopt-only-if-validation-improves rule on min-variance, risk parity, mean-variance, CAPM, inverse-vol (Section 9a).</td>
+      <td>Equal weight kept; min-variance is a forward-test challenger.</td>
     </tr>
     <tr>
       <td>Post-hoc leads (not adopted)</td>
@@ -1548,5 +1876,6 @@ python -m src.battle.design        # buffer / weighting / overlay variants
 python -m src.battle.robust        # holdout, blocks, rolling windows, bootstrap, placebo, sensitivities
 python -m src.battle.procedure_wf  # walk-forward of the selection procedure
 python -m src.battle.regime_rl     # regime analysis and RL overlay
+python -m src.battle.portfolio_opt # weighting schemes (Markowitz, risk parity, CAPM)
 python -m src.battle.finalize      # target portfolio and this report</pre>
 <p>Outputs are in <code>results/battle/</code>.</p></body></html>

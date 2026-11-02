@@ -263,6 +263,34 @@ The ML ensemble's quarterly version was the strongest full-period run (Sharpe {g
     a("<p>Sharpe changed from {:.2f} to {:.2f} when the signal was one month stale, which shows the quarterly result is sensitive to the exact rebalance date.".format(float(sens_stale[sens_stale.Value == '0'].Sharpe.iloc[0]), float(sens_stale[sens_stale.Value == '21'].Sharpe.iloc[0])) + " "
       "A production rule should therefore split capital into tranches rebalanced on different dates (for example monthly tranches each held for three months) to remove timing luck.</p>")
 
+    # ---------------- portfolio construction
+    po, pw_rates = L("portfolio_opt_summary.csv"), L("portfolio_opt_winrates.csv")
+    names = {"equal": "Equal weight", "invvol": "Inverse volatility", "minvar_lw": "Min-variance (Ledoit-Wolf)",
+             "risk_parity_lw": "Risk parity (Ledoit-Wolf)", "meanvar_lw": "Mean-variance (shrunk means)",
+             "capm_meanvar_lw": "CAPM mean-variance"}
+    a("<h2>9a. Does Markowitz / MPT / CAPM weighting improve the selected stocks?</h2>")
+    a("<p>The selection (core3) is held fixed and only the weights change at each rebalance. Inputs use trailing 252 days up to the signal date, a Ledoit-Wolf shrunk covariance, a 20% per-name cap and 0.1% cost per side. "
+      "Mean-variance uses risk aversion 3 and trailing means shrunk halfway to their cross-sectional average; CAPM uses beta x market premium as the return forecast. "
+      "<span class='tag pre'>pre-registered</span> rule: adopt only if validation Sharpe and max drawdown both beat equal weight. The holdout is reported separately.</p>")
+    for f in ("Quarterly", "Monthly", "Half-yearly"):
+        rows = []
+        for sch, lab in names.items():
+            r = {"Scheme": lab}
+            for w, wl in (("Val", "Validation"), ("Hold", "Holdout (OOS)"), ("Full", "Full")):
+                x = po[(po.Freq == f) & (po.Scheme == sch) & (po.Window == w)].iloc[0]
+                r[wl + " return"], r[wl + " Sharpe"], r[wl + " max DD"] = pct(x.TotalReturn), f"{x.Sharpe:.2f}", pct(x.MaxDD)
+            rows.append(r)
+        a(f"<h3>{f} rebalance</h3>" + tbl(pd.DataFrame(rows)))
+    q = pw_rates[(pw_rates.Freq == "Quarterly") & (pw_rates.Block == "Quarter") & (pw_rates.Scheme != "equal")].copy()
+    q["Scheme"] = q.Scheme.map(names)
+    q = q[["Scheme", "Periods", "BeatEqualReturn", "LowerVolThanEqual", "MeanExcessReturn"]]
+    q.columns = ["Scheme", "Quarters", "Share of quarters beating equal weight", "Share with lower volatility", "Mean quarterly excess return"]
+    a("<h3>Does it help every time? Quarter-by-quarter vs equal weight (quarterly book)</h3>" + tbl(q, {
+        "Share of quarters beating equal weight": pct, "Share with lower volatility": pct, "Mean quarterly excess return": lambda v: pct(v, 2)}))
+    a("""<p><b>Conclusion.</b> No scheme passes the rule at the final quarterly rebalance, so equal weight stays. Covariance-based schemes (min-variance, risk parity, inverse-vol) lower volatility in most quarters but do not reliably raise return. CAPM was worst in every window, and mean-variance raised drawdown. 
+Min-variance looked best on the holdout, but it was worse on validation, so that is a post-hoc lead. At monthly (min-variance) and half-yearly (mean-variance) frequencies the rule is met, but these are 2 passes out of 15 scheme and frequency combinations, so they need a forward test before adoption.
+The cause is estimation error: 10 stocks and one year of daily data give noisy covariances and nearly useless return forecasts (rank IC about 0.05).</p>""")
+
     # ---------------- decisions
     a("<h2>10. Decision log for this phase</h2>")
     dec = pd.DataFrame([
@@ -274,6 +302,7 @@ The ML ensemble's quarterly version was the strongest full-period run (Sharpe {g
         ["Hold buffer / weighting / trend overlay", "Adopt only if validation Sharpe and drawdown both improve.", "None adopted: equal weight, no buffer, no overlay."],
         ["RL exposure overlay", "Walk-forward Q-learning on regime states.", "Rejected: lowered Sharpe from {:.2f} to {:.2f}.".format(rl.Sharpe.iloc[0], rl.Sharpe.iloc[1])],
         ["Does it replicate?", "Holdout, half-year blocks, rolling windows, procedure walk-forward, placebo, bootstrap, deflated Sharpe.", "Weak replicability (Section 8). No claim of reliable alpha."],
+        ["Portfolio weighting (Markowitz/MPT/CAPM)", "Same adopt-only-if-validation-improves rule on min-variance, risk parity, mean-variance, CAPM, inverse-vol (Section 9a).", "Equal weight kept; min-variance is a forward-test challenger."],
         ["Post-hoc leads (not adopted)", "Half-yearly, 15-20 names, ML ensemble were better on some views after seeing the holdout.", "Reported, not selected; to be forward-tested."],
     ], columns=["Decision", "How it was decided", "Result"])
     a(tbl(dec))
@@ -309,6 +338,7 @@ python -m src.battle.design        # buffer / weighting / overlay variants
 python -m src.battle.robust        # holdout, blocks, rolling windows, bootstrap, placebo, sensitivities
 python -m src.battle.procedure_wf  # walk-forward of the selection procedure
 python -m src.battle.regime_rl     # regime analysis and RL overlay
+python -m src.battle.portfolio_opt # weighting schemes (Markowitz, risk parity, CAPM)
 python -m src.battle.finalize      # target portfolio and this report</pre>
 <p>Outputs are in <code>results/battle/</code>.</p></body></html>""")
     return "\n".join(H)

@@ -39,7 +39,7 @@ class BacktestResult:
 def run_backtest(mkt, score: np.ndarray, freq: str, start: int, end: int, n: int = 10,
                  buffer: int | None = None, cost: float = 0.001, exposure: np.ndarray | None = None,
                  eligible: np.ndarray | None = None, record: bool = False,
-                 weighting: str = "equal") -> BacktestResult:
+                 weighting: str = "equal", weight_fn=None) -> BacktestResult:
     """score[T,N]: higher is better, NaN = not investable. Start/end are inclusive date indices of the
     NAV window; the first trade is at the open of `start`, signalled at start-1."""
     elig = mkt.eligible() if eligible is None else eligible
@@ -75,6 +75,8 @@ def run_backtest(mkt, score: np.ndarray, freq: str, start: int, end: int, n: int
                     for _ in range(5):  # cap single names at 20% and redistribute
                         wt = np.minimum(wt, 0.20)
                         wt = wt / wt.sum()
+                if weight_fn is not None:  # called with the signal day only, so no look-ahead
+                    wt = weight_fn(d - 1, chosen)
                 val_open = cash + shares @ px
                 target = np.zeros(nstk)
                 target[chosen] = val_open * expo * wt / px[chosen]

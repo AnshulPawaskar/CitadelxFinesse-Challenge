@@ -138,6 +138,75 @@ def run_quarterly_rebalance_strategy(
     }
 
 
+def run_markowitz_rebalance_strategy(
+    features_df: pl.DataFrame,
+    history: dict[str, pl.DataFrame],
+    formation_date,
+    end_date,
+    model_name: str = DEFAULT_MODEL_NAME,
+    initial_capital: float = INITIAL_CAPITAL,
+    rebalance_period: str = "3M",
+    max_weight: float = 0.20,
+) -> dict:
+    """Markowitz-weighted portfolio that reselects holdings on a configurable rebalance cadence."""
+    rebalance_dates = generate_rebalance_dates(formation_date, end_date, rebalance_period)
+    positions: dict[str, float] = {}
+    nav_rows: list[tuple[datetime, float]] = []
+
+    for d in _sorted_daily_dates(history):
+        if d < formation_date or d > end_date:
+            continue
+
+        if d in rebalance_dates or not positions:
+            signal_now = build_composite_score(features_df, d, model_name)
+            selected = equal_weight(select_top_n(signal_now, n=MAX_HOLDINGS))
+            symbol_list = selected["Symbol"].to_list()
+            if not symbol_list:
+                continue
+
+            weights = build_min_variance_weights(symbol_list, history, d, max_weight=max_weight)
+
+            if not positions:
+                market_value = initial_capital
+            else:
+                market_value = 0.0
+                for sym, shares in positions.items():
+                    close_series = history[sym].filter(pl.col("Datetime") <= d).sort("Datetime")
+                    if close_series.height == 0:
+                        continue
+                    market_value += shares * close_series["Close"].to_list()[-1]
+
+            new_positions: dict[str, float] = {}
+            for sym, weight in zip(symbol_list, weights):
+                price_series = history[sym].filter(pl.col("Datetime") <= d).sort("Datetime")
+                if price_series.height == 0:
+                    continue
+                price = price_series["Close"].to_list()[-1]
+                target = market_value * weight
+                target_after_cost = max(target - transaction_cost(target), 0.0)
+                shares = target_after_cost / price if price else 0.0
+                if shares > 0:
+                    new_positions[sym] = shares
+            positions = new_positions
+
+        portfolio_value = 0.0
+        for sym, shares in positions.items():
+            close_series = history[sym].filter(pl.col("Datetime") <= d).sort("Datetime")
+            if close_series.height == 0:
+                continue
+            portfolio_value += shares * close_series["Close"].to_list()[-1]
+        nav_rows.append((d, portfolio_value))
+
+    nav = pl.DataFrame(nav_rows, schema=["Datetime", "PortfolioValue"], orient="row").sort("Datetime")
+    metrics = compute_metrics(nav, initial_capital)
+    return {
+        "daily_nav": nav,
+        "initial_capital": initial_capital,
+        "metrics": metrics,
+        "positions": positions,
+    }
+
+
 def build_min_variance_weights(
     symbol_list: list[str],
     history: dict[str, pl.DataFrame],
@@ -148,6 +217,8 @@ def build_min_variance_weights(
     """Minimum-variance weight vector from trailing daily-return covariance matrix."""
     returns = build_trailing_returns(history, symbol_list, as_of_date, window=window)
     if returns.is_empty() or returns.width == 0:
+        return [1.0 / len(symbol_list)] * len(symbol_list)
+    if returns.width != len(symbol_list):
         return [1.0 / len(symbol_list)] * len(symbol_list)
 
     matrix = returns.to_numpy()
@@ -164,6 +235,8 @@ def build_min_variance_weights(
         return [1.0 / len(symbol_list)] * len(symbol_list)
 
     inv_sigma = np.linalg.pinv(sigma)
+    if inv_sigma.shape[0] != len(symbol_list):
+        return [1.0 / len(symbol_list)] * len(symbol_list)
     raw = inv_sigma @ np.ones(len(symbol_list))
     raw = np.where(np.isfinite(raw), raw, 0.0)
     raw = np.maximum(raw, 0.0)
@@ -248,7 +321,7 @@ def run_comparison(
     output_csv: str | None = None,
     rebalance_periods: list[str] | None = None,
 ) -> pl.DataFrame:
-    """Compare static, Markowitz, and rebalanced strategies across the configured rebalance cadence list."""
+    """Compare static, static+Markowitz, and rebalanced variants (equal-weight and Markowitz)."""
     features = pl.read_parquet(RESULTS_DIR / "features.parquet")
     history = load_universe_history(get_symbol_to_scrip_data())
     signal = build_composite_score(features, formation_date, model_name)
@@ -264,7 +337,7 @@ def run_comparison(
 
     markowitz_result = run_markowitz_strategy(signal, history, formation_date, end_date)
     rows.append({
-        "Strategy": "markowitz",
+        "Strategy": "static_markowitz",
         **_metrics_to_row(markowitz_result["metrics"]),
     })
 
@@ -280,6 +353,19 @@ def run_comparison(
         rows.append({
             "Strategy": f"rebalance_{period.lower()}",
             **_metrics_to_row(rebalance_result["metrics"]),
+        })
+
+        rebalance_markowitz_result = run_markowitz_rebalance_strategy(
+            features,
+            history,
+            formation_date,
+            end_date,
+            model_name=model_name,
+            rebalance_period=period,
+        )
+        rows.append({
+            "Strategy": f"rebalance_{period.lower()}_markowitz",
+            **_metrics_to_row(rebalance_markowitz_result["metrics"]),
         })
 
     comparison = pl.DataFrame(rows).sort("Sharpe", descending=True)

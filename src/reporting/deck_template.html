@@ -64,17 +64,17 @@ table.cmp td{padding:19px 12px;font-size:25px}table.t2{font-size:21px}table.t2 t
 <div class="body"><div style="display:flex;gap:56px;flex:1;margin-top:10px">
 <div class="col" style="flex:1.05;justify-content:center;gap:34px">
 <div class="kick fade">CitadelxFinesse Portfolio Challenge &middot; Research Presentation</div>
-<h1 class="fade d1">Stock selection tested <em>without look-ahead</em> using walk-forward validation</h1>
-<p class="lead fade d2" style="margin-top:0">300 NSE stocks &middot; 13 signals, including machine learning and deep learning &middot; every decision is tested and can be repeated.</p>
+<h1 class="fade d1">Stock selection tested <em>without look-ahead</em> using validation and holdout data</h1>
+<p class="lead fade d2" style="margin-top:0">300 NSE stocks &middot; 8 price-based signals &middot; every decision is tested and can be repeated.</p>
 <div class="fade d3"><div style="font-size:18px;color:var(--mute);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:10px">Team Quantify &middot; Presenters</div>
 <div class="pres"><div><small>Presenter</small>Anshul Pawaskar</div><div><small>Presenter</small>Ashish Kela</div><div><small>Presenter</small>Jatin Dhanani</div></div></div>
 </div>
 <div class="col" style="flex:.95;justify-content:center;gap:24px">
-<div class="card fade d2" style="padding:22px 28px"><div class="ctitle">Competition window &middot; 1 Jan - 30 Jun 2026</div>
-<div style="height:380px;position:relative"><canvas id="c_t" style="position:absolute;inset:0;width:100%;height:100%"></canvas></div>
-<div class="kpis k3" style="margin-top:16px"><div><div style="font-size:46px;font-weight:800;color:var(--teal)" data-count="__H1RET__" data-dec="1" data-suf="%" data-pre="+">0</div><div style="font-size:18px;color:var(--mute)">Strategy (net of costs)</div></div>
-<div><div style="font-size:46px;font-weight:800;color:var(--grey)" data-count="__H1B__" data-dec="1" data-suf="%" data-pre="+">0</div><div style="font-size:18px;color:var(--mute)">Equal-weight benchmark</div></div>
-<div><div style="font-size:46px;font-weight:800;color:var(--navy)" data-count="__MULT__" data-dec="1" data-suf="x">0</div><div style="font-size:18px;color:var(--mute)">Return multiple</div></div></div></div>
+<div class="card fade d2" style="padding:22px 28px"><div class="ctitle">Final design</div>
+<div class="fn fade d2" style="background:#14325c;width:100%"><b>300 stocks</b>NSE universe, liquidity and data checks</div>
+<div class="fn fade d3" style="background:#1d4a85;width:90%"><b>8 signals</b>price-based factors tested</div>
+<div class="fn fade d4" style="background:#2563eb;width:80%"><b>Top 3 signals</b>6-month momentum, 12-1 momentum, risk-adjusted momentum</div>
+<div class="fn fade d5" style="background:#0a8f7a;width:70%;margin-bottom:0"><b>10 stocks</b>half-yearly rebalance, equal weight</div></div>
 <div class="org-big fade d4"><span class="lgs" style="display:flex;gap:16px;align-items:center"></span><div class="t">__LABNAME__</div></div>
 </div></div></div>
 <div class="ftr"><span><b>Team Quantify</b> &nbsp;|&nbsp; CitadelxFinesse Portfolio Challenge</span><span class="pg">1 / __N__</span></div></section>
@@ -83,8 +83,8 @@ table.cmp td{padding:19px 12px;font-size:25px}table.t2{font-size:21px}table.t2 t
 <div class="body"><div class="kick">Index</div><h2>Outline: from strategy selection to <em>final result</em></h2>
 <div class="idx">
 <div class="it" data-go="2"><div class="no">1</div><div class="tx">Scope and research design<small>Objective, rules, validation method</small></div><div class="pn">p.3-4</div></div>
-<div class="it" data-go="4"><div class="no">2</div><div class="tx">Momentum is the leader<small>13 signals tested</small></div><div class="pn">p.5</div></div>
-<div class="it" data-go="5"><div class="no">3</div><div class="tx">Shortlisted signals<small>Top 3, and a check of ML, DL and RL</small></div><div class="pn">p.6-7</div></div>
+<div class="it" data-go="4"><div class="no">2</div><div class="tx">Momentum is the leader<small>8 signals tested</small></div><div class="pn">p.5</div></div>
+<div class="it" data-go="5"><div class="no">3</div><div class="tx">Shortlisted signals<small>Top 3, and momentum against other signals</small></div><div class="pn">p.6-7</div></div>
 <div class="it" data-go="7"><div class="no">4</div><div class="tx">Allocation weights<small>Stability, number of stocks</small></div><div class="pn">p.8</div></div>
 <div class="it" data-go="8"><div class="no">5</div><div class="tx">Rebalancing frequency<small>Why not a higher frequency</small></div><div class="pn">p.9</div></div>
 <div class="it" data-go="9"><div class="no">6</div><div class="tx">Comparison: 1M, 3M, 6M<small>Validation and holdout</small></div><div class="pn">p.10</div></div>
@@ -93,7 +93,7 @@ table.cmp td{padding:19px 12px;font-size:25px}table.t2{font-size:21px}table.t2 t
 <div class="it" data-go="15"><div class="no">A1</div><div class="tx">Appendix A1<small>Stock ranking in the final portfolio</small></div><div class="pn">p.16</div></div>
 <div class="it" data-go="16"><div class="no">A2</div><div class="tx">Appendix A2<small>Meaning of signals, correlation</small></div><div class="pn">p.17</div></div>
 </div>
-<div class="card soft fade d3" style="margin-top:26px;display:flex;align-items:center;gap:30px;font-size:28px;color:var(--navy)"><b>Final design:</b> blend of three signals (6-month momentum, MLP, risk-adjusted momentum) &nbsp;&#8594;&nbsp; half-yearly rebalance &nbsp;&#8594;&nbsp; 10 stocks, equal weight</div>
+<div class="card soft fade d3" style="margin-top:26px;display:flex;align-items:center;gap:30px;font-size:28px;color:var(--navy)"><b>Final design:</b> blend of three signals (6-month momentum, 12-1 momentum, risk-adjusted momentum) &nbsp;&#8594;&nbsp; half-yearly rebalance &nbsp;&#8594;&nbsp; 10 stocks, equal weight</div>
 </div>
 __FTR2__</section>
 <!-- 3 CHALLENGE & DESIGN -->
@@ -106,8 +106,8 @@ __FTR2__</section>
 <li class="fade d3"><b>Why technical data:</b> company results arrive more than 6 months late. We use price and volume signals, with institutional-style controls: no look-ahead, costs included, liquidity limits.</li></ul></div>
 <div class="col card soft" style="flex:.9;justify-content:center">
 <div class="fn fade" style="background:#14325c;width:100%"><b>300 stocks</b>liquidity and data checks</div>
-<div class="fn fade d1" style="background:#1d4a85;width:88%"><b>13 signals</b>8 factors &middot; 3 ML / DL models &middot; 2 blends</div>
-<div class="fn fade d2" style="background:#2563eb;width:76%"><b>130 test cells</b>signals x 5 frequencies x 2 buffer settings</div>
+<div class="fn fade d1" style="background:#1d4a85;width:88%"><b>8 signals</b>momentum and trend factors</div>
+<div class="fn fade d2" style="background:#2563eb;width:76%"><b>80 test cells</b>signals x 5 frequencies x 2 buffer settings</div>
 <div class="fn fade d3" style="background:#0a8f7a;width:64%"><b>Top 3 signals</b>average rank (validation data only)</div>
 <div class="fn fade d4" style="background:#087a69;width:52%;margin-bottom:0"><b>10 stocks</b>half-yearly, equal weight</div></div></div></div>
 __FTR3__</section>
@@ -116,30 +116,31 @@ __FTR3__</section>
 <div class="body"><div class="kick">1 &middot; Validation method</div><h2>Design on one period. <em>Test on another.</em></h2>
 <div class="tl" style="margin-top:34px"><div style="background:#cbd5e1;color:#1e293b;flex:2">Training<br>2020 - 2021</div><div style="background:#2563eb;color:#fff;flex:5">Validation: design is fixed here<br>2022-01 to 2024-06</div><div style="background:#d97706;color:#fff;flex:5">Holdout: rules fixed before testing<br>2024-07 to 2026-10</div></div>
 <div class="row"><div class="col" style="flex:1"><ul class="pts">
-<li class="fade"><b>Walk-forward ML:</b> the training window grows over time. Models are retrained every 63 days. A gap is kept between training labels and test data.</li>
+<li class="fade"><b>No look-ahead:</b> each signal uses only prices known on the rebalancing date. Portfolios are formed after the close and held from the next day.</li>
 <li class="fade d1"><b>Rules fixed first:</b> the best 3 signals and the rebalancing frequency are chosen by validation Sharpe ratio.</li>
 <li class="fade d2"><b>Extra features are used only if</b> validation Sharpe ratio and drawdown both improve.</li></ul></div>
-<div class="col card soft" style="flex:.85;justify-content:center;gap:26px"><div class="ctitle" style="margin:0">Why this matters: testing 100+ variants overstates in-sample results</div>
-<div class="kpis k3" style="gap:16px"><div><div style="font-size:54px;font-weight:800;color:var(--blue)">63d</div><div style="font-size:20px;color:var(--mute)">days between retraining</div></div><div><div style="font-size:54px;font-weight:800;color:var(--teal)">H+2d</div><div style="font-size:20px;color:var(--mute)">days gap before test</div></div><div><div style="font-size:54px;font-weight:800;color:var(--amber)">138</div><div style="font-size:20px;color:var(--mute)">trials in deflated Sharpe</div></div></div>
+<div class="col card soft" style="flex:.85;justify-content:center;gap:26px"><div class="ctitle" style="margin:0">Why this matters: testing many variants overstates in-sample results</div>
+<div class="kpis k3" style="gap:16px"><div><div style="font-size:54px;font-weight:800;color:var(--blue)">8</div><div style="font-size:20px;color:var(--mute)">signals tested</div></div><div><div style="font-size:54px;font-weight:800;color:var(--teal)">5</div><div style="font-size:20px;color:var(--mute)">rebalancing frequencies</div></div><div><div style="font-size:54px;font-weight:800;color:var(--amber)">88</div><div style="font-size:20px;color:var(--mute)">trials in deflated Sharpe</div></div></div>
 <div style="font-size:24px;line-height:1.45;color:#26364f">A <b>holdout period</b> and a <b>deflated Sharpe ratio</b> correct for choosing the best of many tests.</div></div></div></div>
 __FTR4__</section>
 <!-- 4 STRATEGY SEARCH -->
 <section class="slide" data-i="4">__HDR__
-<div class="body"><div class="kick">2 &middot; Momentum</div><h2>Momentum-based signals lead <em>among 13 tested</em></h2>
+<div class="body"><div class="kick">2 &middot; Momentum</div><h2>Momentum-based signals lead <em>among 8 tested</em></h2>
 <div class="row" style="margin-top:22px"><div class="card col" style="flex:1"><div class="ctitle">Mean validation Sharpe ratio over 5 rebalancing frequencies</div><div class="cv"><canvas id="c_sig"></canvas></div>
 <div class="cap">Validation period 2022-01 to 2024-06. Outlined bars: the top 3, rank-averaged into one signal.</div></div>
 <div class="card col" style="flex:1.12;padding:14px 24px 12px">__SIGTABLE__
 <div class="cap" style="margin-top:6px"><b>Rank IC 21d:</b> correlation with the next 21-day return. <b>Max DD:</b> mean over 5 frequencies.</div></div></div></div>
 __FTR5__</section>
-<!-- 5 ML DL RL -->
+<!-- 5 FAMILY -->
 <section class="slide" data-i="5">__HDR__
-<div class="body"><div class="kick">3 &middot; Shortlist &middot; non-momentum check</div><h2>Top 3 shortlisted; <em>ML, DL and RL checked</em></h2>
-<div class="row" style="margin-top:22px"><div class="card col" style="flex:1.2"><div class="ctitle">Learning models compared on validation data</div>__MLTABLE__
-<div class="cap" style="margin-top:14px"><b>Method:</b> models are retrained every 63 days using only past data. Targets: return over the next 5, 21 and 63 days. RL: Q-learning chooses 0%, 50% or 100% market exposure from trend and volatility state.</div>
-<div style="margin-top:auto;font-size:23px;color:var(--navy);line-height:1.4;padding-top:14px"><b>Result:</b> the neural net (the only non-momentum signal in the top 3) enters the final blend. The other ML models and the RL overlay did not improve results.</div></div>
-<div class="card col" style="flex:1"><div class="ctitle">RL overlay: Sharpe ratio, Feb 2023 onward (quarterly blend)</div><div style="height:300px;position:relative"><canvas id="c_rl" style="position:absolute;inset:0;width:100%;height:100%"></canvas></div>
-<div style="margin-top:22px">__RLTABLE__</div>
-<div class="cap">Exposure: average share of capital invested.</div></div></div></div>
+<div class="body"><div class="kick">3 &middot; Shortlist &middot; momentum against other signals</div><h2>The top 3 are <em>all momentum signals</em></h2>
+<div class="row" style="margin-top:22px"><div class="card col" style="flex:1.25"><div class="ctitle">Signal families on validation data</div>__MLTABLE__
+<div class="cap" style="margin-top:14px">Mean over the signals in each family and over 5 rebalancing frequencies. Validation period 2022-01 to 2024-06.</div></div>
+<div class="col" style="flex:1;justify-content:center"><ul class="pts">
+<li class="fade"><b>Top 3:</b> 6-month momentum, 12-1 momentum and risk-adjusted momentum.</li>
+<li class="fade d1"><b>12-1 momentum</b> is the return over the past 12 months, skipping the latest month.</li>
+<li class="fade d2"><b>Risk-adjusted momentum</b> divides momentum by volatility.</li>
+<li class="fade d3"><b>Ranks are averaged</b> so no single signal decides the choice.</li></ul></div></div></div>
 __FTR6__</section>
 <!-- 6 SIGNALS -->
 <section class="slide" data-i="6">__HDR__
@@ -148,8 +149,8 @@ __FTR6__</section>
 <div class="cap">Rank IC is the Spearman correlation between the signal and the later return. Validation period: 2022-01 to 2024-06.</div></div>
 <div class="col" style="flex:1;justify-content:center"><ul class="pts">
 <li class="fade"><b>Rank IC &asymp; 0.005 at 1 day,</b> &asymp; 0.05 at 21 days: so there is no useful daily signal.</li>
-<li class="fade d1"><b>ML and DL models</b> were not better than simple factors at 21 days.</li>
-<li class="fade d2"><b>So we combine</b> momentum, MLP and risk-adjusted momentum to reduce reliance on one model.</li></ul></div></div></div>
+<li class="fade d1"><b>Momentum signals</b> have the highest rank IC at 63 and 126 days.</li>
+<li class="fade d2"><b>So we combine</b> three momentum signals to reduce reliance on one measure.</li></ul></div></div></div>
 __FTR7__</section>
 <!-- 8 WEIGHTS -->
 <section class="slide" data-i="7">__HDR__
@@ -157,15 +158,15 @@ __FTR7__</section>
 <div class="row"><div class="card col" style="flex:1.25"><div class="ctitle">Sharpe ratio by weighting method (half-yearly, 20% cap)</div><div class="cv"><canvas id="c_w"></canvas></div>
 <div class="cap">Methods: Markowitz mean-variance, minimum variance, risk parity, inverse volatility, CAPM. Covariance: Ledoit-Wolf.</div></div>
 <div class="col" style="flex:1;justify-content:center"><ul class="pts">
-<li class="fade"><b>Mean-variance</b> has the best validation Sharpe (2.39), but its holdout drawdown is worse (-39% vs -31%) and its weights change sharply at each rebalance.</li>
+<li class="fade"><b>Mean-variance</b> has the best validation Sharpe (2.28), but it gives no gain on holdout data and its weights change sharply at each rebalance.</li>
 <li class="fade d1"><b>Risk parity and inverse volatility</b> are no better than equal weight.</li>
-<li class="fade d2"><b>Number of stocks:</b> 5 stocks have the largest drawdown. From 10 stocks upward the drawdown is similar.</li></ul>
+<li class="fade d2"><b>Number of stocks:</b> 5 stocks give a higher Sharpe but a larger drawdown than 10 stocks. We use 10 to limit single-stock risk.</li></ul>
 <div class="card" style="padding:12px 16px">__HOLDTABLE__</div></div></div></div>
 __FTR8__</section>
 <!-- 7 FREQUENCY -->
 <section class="slide" data-i="8">__HDR__
 <div class="body"><div class="kick">5 &middot; Rebalancing frequency</div><h2>Trading more often adds turnover, <em>not Sharpe ratio</em></h2>
-<div class="row"><div class="card col" style="flex:1.35"><div class="ctitle">Mean Sharpe across 13 signals, by rebalancing frequency</div><div class="cv"><canvas id="c_freq"></canvas></div>
+<div class="row"><div class="card col" style="flex:1.35"><div class="ctitle">Mean Sharpe across 8 signals, by rebalancing frequency</div><div class="cv"><canvas id="c_freq"></canvas></div>
 <div class="cap">Labels show yearly one-way turnover as a multiple of portfolio value (validation period).</div></div>
 <div class="col" style="flex:1;justify-content:center"><ul class="pts">
 <li class="fade"><b>Daily trading</b> has about __TURNX__ times the turnover of half-yearly trading and the lowest mean Sharpe ratio among the five.</li>
@@ -184,19 +185,23 @@ __FTR10__</section>
 <div class="body"><div class="kick">7 &middot; Result: 6M is the most stable</div><h2>Half-yearly: lowest turnover, <em>and results hold under stress</em></h2>
 <div class="row"><div class="card col" style="flex:1"><div class="ctitle">Stress tests of the half-yearly portfolio</div>__STABTABLE__</div>
 <div class="col" style="flex:1;justify-content:center"><ul class="pts">
-<li class="fade"><b>Turnover:</b> 0.9 per year, against 3.1 (quarterly) and 7.6 (monthly).</li>
+<li class="fade"><b>Turnover:</b> 0.9 per year, against 2.8 (quarterly) and 5.1 (monthly).</li>
 <li class="fade d1"><b>Cost:</b> Sharpe ratio is almost unchanged when cost rises from 0.1% to 0.5% per side.</li>
-<li class="fade d2"><b>Signal age:</b> a 42-day delay lowers the Sharpe ratio from 1.43 to 0.97.</li></ul>
-<div class="card soft fade d3" style="font-size:23px;line-height:1.4;color:var(--navy)"><b>Disclosure:</b> the rule we set first (mean over all 13 signals) favoured quarterly (1.98 vs 1.87). We chose half-yearly for our blend after seeing that it was best on both validation and holdout.</div></div></div></div>
+<li class="fade d2"><b>Signal age:</b> a 42-day delay lowers the Sharpe ratio from 1.23 to 0.92.</li></ul>
+<div class="card soft fade d3" style="font-size:23px;line-height:1.4;color:var(--navy)"><b>Disclosure:</b> the rule we set first (mean over all 8 signals) favoured weekly (2.00), not half-yearly (1.75). We chose half-yearly for our blend after seeing that it was best on holdout. This choice is post-hoc.</div></div></div></div>
 __FTR11__</section>
 <!-- 10 RESULT -->
 <section class="slide" data-i="11">__HDR__
 <div class="body"><div class="kick">8 &middot; Final result &middot; competition window 1 Jan - 30 Jun 2026</div><h2>Out-of-sample return of <em>__H1RET_T__</em> in the competition window</h2>
-<div class="row"><div class="card col" style="flex:1.2"><div class="ctitle">Growth of 1 (net of costs)</div><div class="cv"><canvas id="c_h1"></canvas></div>
-<div class="cap">This period is inside the holdout. Rules were fixed on validation data.</div>
+<div class="kpis k4" style="margin-top:18px;gap:20px">
+<div class="card kpi g" style="padding:14px 22px"><div class="n" style="font-size:52px" data-count="__FCAGR__" data-dec="1" data-suf="%" data-pre="+">0</div><div class="l" style="font-size:19px;margin-top:6px">CAGR 2022 - 2026, net of costs</div></div>
+<div class="card kpi g" style="padding:14px 22px"><div class="n" style="font-size:52px" data-count="__FSH__" data-dec="2">0</div><div class="l" style="font-size:19px;margin-top:6px">Sharpe ratio, full window</div></div>
+<div class="card kpi" style="padding:14px 22px"><div class="n" style="font-size:52px" data-count="__HOLD__" data-dec="1" data-suf="%" data-pre="+">0</div><div class="l" style="font-size:19px;margin-top:6px">Holdout return (benchmark __HOLDB__%)</div></div>
+<div class="card kpi a" style="padding:14px 22px"><div class="n" style="font-size:52px" data-count="__H1RET__" data-dec="2" data-suf="%" data-pre="+">0</div><div class="l" style="font-size:19px;margin-top:6px">Competition window, 1 Jan - 30 Jun 2026</div></div></div>
+<div class="row" style="margin-top:18px"><div class="card col" style="flex:1.2"><div class="ctitle">Growth of 1 (net of costs)</div><div class="cv"><canvas id="c_h1"></canvas></div>
+<div class="cap">One portfolio formed on 31 Dec 2025 and held from 1 Jan, 10 stocks at 10% each. This period is inside the holdout; rules were fixed on validation data.</div>
 <div style="display:flex;gap:44px;margin-top:14px;font-size:22px;color:#26364f"><span>Net profit <b class="good">Rs __NET__</b></span><span>Sharpe <b>__H1SH__</b></span><span>Maximum drawdown <b>__H1DD__</b></span></div></div>
-<div class="card col" style="flex:1"><div class="ctitle">Profit contribution by stock (Rs lakh)</div><div class="cv"><canvas id="c_contrib"></canvas></div>
-<div class="cap">One portfolio formed on 31 Dec 2025 and held from 1 Jan. 10 stocks at 10% each.</div></div></div></div>
+</div></div>
 __FTR12__</section>
 <!-- 11 REGIMES -->
 <section class="slide" data-i="12">__HDR__
@@ -217,7 +222,7 @@ __FTR13__</section>
 <div class="card kpi a"><div class="n" data-count="__DSR__" data-dec="2">0</div><div class="l">deflated Sharpe probability (__TRIALS__ trials)</div></div></div>
 <div class="row" style="margin-top:24px"><div class="card col" style="flex:1.2"><div class="ctitle">Strategy Sharpe ratio vs 300 random half-yearly portfolios</div><div class="cv"><canvas id="c_pl"></canvas></div>
 </div>
-<div class="col" style="flex:1;justify-content:center"><ul class="pts"><li class="fade"><b>Better than most random portfolios</b> (about the 98th percentile).</li>
+<div class="col" style="flex:1;justify-content:center"><ul class="pts"><li class="fade"><b>Better than most random portfolios</b> (Sharpe at about the 85th percentile, CAGR at the 99th).</li>
 <li class="fade d1"><b>Holdout (2024-07 to 2026-10):</b> __HOLD__% vs __HOLDB__% for the benchmark. The competition window is inside this period.</li>
 <li class="fade d2"><b>Limit:</b> the choice of 6M was made after seeing the data. The deflated Sharpe ratio adjusts for __TRIALS__ trials.</li></ul></div></div></div>
 __FTR14__</section>
@@ -226,17 +231,16 @@ __FTR14__</section>
 <div class="body"><div class="kick">Conclusion</div><h2>Each decision, <em>its evidence and its result</em></h2>
 <div class="row"><div class="card" style="flex:1.45;padding-top:14px;padding-bottom:10px"><table class="cmp">
 <tr><th>Decision</th><th>Evidence</th><th>Result</th></tr>
-<tr><td>Signals</td><td>13 signals set in advance; IC and validation Sharpe ratio</td><td><span class="tag t-ok">3-signal blend</span></td></tr>
-<tr><td>Frequency</td><td>1M, 3M and 6M compared; turnover, cost, signal age</td><td><span class="tag t-ok">Half-yearly</span></td></tr>
+<tr><td>Signals</td><td>8 signals; IC and validation Sharpe</td><td><span class="tag t-ok">3-signal blend</span></td></tr>
+<tr><td>Frequency</td><td>1M, 3M, 6M; turnover and cost</td><td><span class="tag t-ok">Half-yearly</span></td></tr>
 <tr><td>Weights</td><td>Stability, holdout drawdown, number of stocks</td><td><span class="tag t-ok">Equal</span></td></tr>
-<tr><td>RL exposure control</td><td>Walk-forward Q-learning on market states</td><td><span class="tag t-warn">Rejected</span></td></tr>
-<tr><td>Costs and liquidity</td><td>0.1% per trade side; Rs 2 cr minimum turnover</td><td><span class="tag t-ok">Included</span></td></tr>
-<tr><td>Strength of edge</td><td>Holdout, random portfolios, deflated Sharpe</td><td><span class="tag t-info">Moderate</span></td></tr></table></div>
+<tr><td>Costs</td><td>0.1% per trade side; Rs 2 cr minimum turnover</td><td><span class="tag t-ok">Included</span></td></tr>
+<tr><td>Strength of edge</td><td>Holdout, random portfolios, deflated Sharpe</td><td><span class="tag t-warn">Modest</span></td></tr></table></div>
 <div class="col" style="flex:1;justify-content:center"><div class="ctitle" style="font-size:24px">Next 90 days</div><ul class="pts">
 <li class="fade"><b>Test on new data</b> with the half-yearly schedule.</li>
 <li class="fade d1"><b>Options to test:</b> sector limits, 15 - 20 stocks, minimum-variance weights.</li>
 <li class="fade d2"><b>Data cleaning:</b> correct the 2021 prices and check corporate actions.</li></ul></div></div>
-<div class="card soft fade d4" style="margin-top:20px;font-size:26px;color:var(--navy);text-align:center"><b>Team Quantify:</b> a sound method that can be repeated, with a moderate measured edge. Thank you.</div></div>
+<div class="card soft fade d4" style="margin-top:20px;font-size:26px;color:var(--navy);text-align:center"><b>Team Quantify:</b> a sound method that can be repeated, with a modest measured edge. Thank you.</div></div>
 __FTR15__</section>
 <!-- A1 RANKING -->
 <section class="slide" data-i="15">__HDR__
@@ -252,12 +256,12 @@ __FTR16__</section>
 <div class="body"><div class="kick">Appendix A2 &middot; Signals</div><h2>What each signal measures, <em>and how they relate</em></h2>
 <div class="row"><div class="card col" style="flex:1.1;padding:14px 20px"><table class="t2"><tr><th>Signal</th><th>Meaning</th></tr>
 <tr><td><b>Mom. 6m</b></td><td>Return over 6 months, skipping the last month</td></tr>
-<tr><td><b>Risk-adj. mom.</b></td><td>12-month return (skip last month) divided by 126-day volatility</td></tr>
-<tr><td><b>MLP</b></td><td>Neural network, 2 hidden layers, predicts future return from the factors</td></tr>
 <tr><td><b>Mom. 12-1</b></td><td>Return over 12 months, skipping the last month</td></tr>
+<tr><td><b>Risk-adj. mom.</b></td><td>12-month return (skip last month) divided by 126-day volatility</td></tr>
+<tr><td><b>Mom. + low vol</b></td><td>Momentum combined with low volatility</td></tr>
+<tr><td><b>Rel. strength</b></td><td>Return compared with the universe</td></tr>
 <tr><td><b>Trend quality</b></td><td>Trend strength, closeness to 52-week high, moving-average order</td></tr>
-<tr><td><b>Ridge</b></td><td>Linear model with penalty, predicts future return</td></tr>
-<tr><td><b>LightGBM</b></td><td>Boosted trees, predicts future return</td></tr></table></div>
+<tr><td><b>Technical comp.</b></td><td>Average of trend and price indicators</td></tr></table></div>
 <div class="card col" style="flex:1"><div class="ctitle">Mean rank correlation (validation period)</div>__CORRTABLE__
 <div class="cap" style="margin-top:10px">Values near 1 mean two signals pick similar stocks.</div></div></div></div>
 __FTR17__</section>
@@ -309,18 +313,18 @@ function freqChart(){const id='c_freq',{g,w,h}=setup(id),m={l:60,r:20,t:48,b:80}
  anim(id,p=>{g.clearRect(0,0,w,h);axes(g,w,h,m,mn,mx,v=>v.toFixed(1),6);const gw=(w-m.l-m.r)/it.length,y0=h-m.b-(h-m.t-m.b)*(0-mn)/(mx-mn);it.forEach((x,i)=>{const xx=m.l+gw*i+gw*.12,bw=gw*.38;[[x.v,C.blue],[x.h,C.amber]].forEach(([v,c],j)=>{const hh=(h-m.t-m.b)*v/(mx-mn)*p;g.fillStyle=c;g.fillRect(xx+j*bw,y0-Math.max(hh,0),bw-4,Math.abs(hh));g.fillStyle=C.ink;g.textAlign='center';g.font='bold 18px '+FONT;g.fillText(v.toFixed(2),xx+j*bw+bw/2-2,v>=0?y0-hh-8:y0-hh+22)});
   g.fillStyle=C.ink;g.textAlign='center';g.font='bold 19px '+FONT;g.fillText(x.f,m.l+gw*i+gw/2,h-m.b+30);g.fillStyle=C.mute;g.font='17px '+FONT;g.fillText(x.t+'x turnover',m.l+gw*i+gw/2,h-m.b+56)});
   legend(g,m,[['Validation mean Sharpe',C.blue],['Holdout mean Sharpe',C.amber]])})}
-function sigChart(){const id='c_sig',{g,w,h}=setup(id),it=D.sig,n=it.length,lab=260,rowH=(h-40)/n,mx=2.5,sc=(w-lab-70)/mx,col={'Factor':C.blue,'ML':C.teal,'DL':'#7c3aed','ML + DL':C.teal,'Blend':C.grey};
- anim(id,p=>{g.clearRect(0,0,w,h);const lg=[['Factor',C.blue],['ML',C.teal],['DL','#7c3aed'],['Blend',C.grey]];let lx=lab;g.font='18px '+FONT;g.textAlign='left';lg.forEach(([a,c])=>{g.fillStyle=c;g.fillRect(lx,8,18,12);g.fillStyle=C.ink;g.fillText(a,lx+26,20);lx+=g.measureText(a).width+56});
+function sigChart(){const id='c_sig',{g,w,h}=setup(id),it=D.sig,n=it.length,lab=260,rowH=(h-40)/n,mx=2.5,sc=(w-lab-70)/mx,col={'Momentum':C.blue,'Other':C.grey};
+ anim(id,p=>{g.clearRect(0,0,w,h);const lg=[['Momentum',C.blue],['Other',C.grey]];let lx=lab;g.font='18px '+FONT;g.textAlign='left';lg.forEach(([a,c])=>{g.fillStyle=c;g.fillRect(lx,8,18,12);g.fillStyle=C.ink;g.fillText(a,lx+26,20);lx+=g.measureText(a).width+56});
   it.forEach((x,i)=>{const y=40+i*rowH,len=x.v*sc*p;g.fillStyle=C.ink;g.textAlign='right';g.font=(x.pick?'bold ':'')+'19px '+FONT;g.fillText(x.n,lab-12,y+rowH*.66);g.fillStyle=col[x.t];g.fillRect(lab,y+rowH*.14,len,rowH*.68);if(x.pick){g.strokeStyle=C.navy;g.lineWidth=3;g.strokeRect(lab,y+rowH*.14,len,rowH*.68)}
    g.fillStyle=C.ink;g.font='bold 19px '+FONT;g.textAlign='left';g.fillText(x.v.toFixed(2),lab+len+8,y+rowH*.66)});
   g.strokeStyle=C.mute;g.lineWidth=1.5;g.beginPath();g.moveTo(lab,32);g.lineTo(lab,h);g.stroke()})}
 function counters(s){s.querySelectorAll('[data-count]').forEach(el=>{const v=+el.dataset.count,dec=+el.dataset.dec||0,suf=el.dataset.suf||'',pre=el.dataset.pre||'';let t0=null;(function f(t){if(!t0)t0=t;const p=Math.min(1,(t-t0)/1400);el.textContent=pre+(v*ease(p)).toFixed(dec)+suf;if(p<1)requestAnimationFrame(f)})(performance.now())})}
 function draw(i){counters(slides[i]);
- if(i===0)lineChart('c_t',D.h1.dates,[{n:'Strategy',c:C.teal,v:D.h1.strategy,w:4},{n:'Benchmark',c:C.grey,v:D.h1.bench,w:3}],{full:false,endLabel:true,pct:true});
- if(i===4)sigChart();if(i===5){barH('c_rl',D.rl.map(x=>({s:x.n.replace('Core3 Q','Strategy'),v:x.sh})),'',2)}
+ 
+ if(i===4)sigChart();
  if(i===6)icChart();if(i===7)wChart();if(i===8)freqChart();if(i===13)histChart();
  if(i===9)groupBars('c_fc',D.fc.map(x=>x.f),[{n:'Validation',c:C.blue,v:D.fc.map(x=>x.vs)},{n:'Holdout',c:C.amber,v:D.fc.map(x=>x.hs)}],v=>v.toFixed(2));
- if(i===11){lineChart('c_h1',D.h1.dates,[{n:'Strategy',c:C.teal,v:D.h1.strategy,w:4}],{endLabel:true,pct:true,every:1});barH('c_contrib',D.contrib.map(x=>({s:x.s,v:x.v})),'')}
+ if(i===11){lineChart('c_h1',D.h1.dates,[{n:'Strategy',c:C.teal,v:D.h1.strategy,w:4}],{endLabel:true,pct:true,every:1})}
  if(i===12){groupBars('c_yr',D.years.map(y=>y.y),[{n:'Strategy',c:C.teal,v:D.years.map(y=>y.s)},{n:'Benchmark',c:C.grey,v:D.years.map(y=>y.b)}],v=>v.toFixed(0)+'%');
   lineChart('c_cum',D.cum.dates,[{n:'Strategy',c:C.teal,v:D.cum.strategy,w:3.5},{n:'Equal-weight benchmark',c:C.grey,v:D.cum.bench,w:3}],{shade:'2024-07-01',every:6})}}
 function go(n){n=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>{s.classList.toggle('active',i===n);s.classList.toggle('past',i<n)});cur=n;history.replaceState(null,'','#'+(n+1));setTimeout(()=>draw(n),120)}

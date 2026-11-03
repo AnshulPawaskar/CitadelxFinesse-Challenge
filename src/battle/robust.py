@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from src.battle.context import FREQ_NAME, build_context
+from src.battle.context import FREQ_NAME, HANDSET, build_context
 from src.battle.data import BATTLE_DIR
 from src.battle.design import trend_overlay
 from src.battle.engine import metrics, run_backtest
 
 FINAL = dict(signal="core3", freq="S")
-N_TRIALS = 130 + 8  # grid cells + design variants examined before the choice was frozen
+N_TRIALS = 80 + 8  # factor grid cells (8 signals x 5 frequencies x 2 buffers) + design variants
 
 
 def nav_series(ctx, signal, freq, window, **kw):
@@ -103,8 +103,8 @@ def run(ctx):
         ("core3 | Static (no rebalance)", "core3", "N", {}),
         ("Original composite_quantitative | Static", "composite_quantitative", "N", {}),
         ("composite_quantitative | Quarterly", "composite_quantitative", "Q", {}),
-        ("ml_ensemble | Quarterly", "ml_ensemble", "Q", {}),
-        ("momentum_6m | Quarterly", "momentum_6m", "Q", {}),
+        ("momentum_12_1 | Half-yearly", "momentum_12_1", "S", {}),
+        ("momentum_6m | Half-yearly", "momentum_6m", "S", {}),
     ]:
         s, r = nav_series(ctx, sig, f, oos, **kw)
         runs[label] = (s, r)
@@ -177,6 +177,7 @@ def run(ctx):
 
     # --- replicability: does validation performance predict holdout across the whole grid? -------------------------
     g = pd.read_csv(BATTLE_DIR / "grid_signal_frequency.csv")
+    g = g[g["Signal"].isin(HANDSET)]
     rho, p = stats.spearmanr(g["Val_Sharpe"], g["Hold_Sharpe"])
     bh = metrics(bench.loc[mkt.dates[ctx.hold[0]] : mkt.dates[ctx.hold[1]]].to_numpy())["Sharpe"]
     rep = {"SpearmanValHoldSharpe": rho, "p": p, "CellsBeatBenchHoldSharpe": (g["Hold_Sharpe"] > bh).mean(),

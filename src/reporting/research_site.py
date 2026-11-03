@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.battle.context import build_context
+from src.battle.context import HANDSET, build_context
 from src.battle.engine import metrics, run_backtest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -42,13 +42,13 @@ def build_data():
     d["holdb"] = float((1 + hs.Benchmark).prod() - 1)
     d["holds"] = float((1 + hs.Strategy).prod() - 1)
     d["years"] = [{"y": ("2026 YTD" if r.Year == 2026 else str(r.Year)), "s": round(r.Strategy * 100, 1), "b": round(r.Benchmark * 100, 1)} for r in y.itertuples()]
-    g = rd("grid_signal_frequency.csv"); g0 = g[g.Buffer == 0]
+    g = rd("grid_signal_frequency.csv"); g = g[g.Signal.isin(HANDSET)]; g0 = g[g.Buffer == 0]
     f = g0.groupby("Freq").agg(v=("Val_Sharpe", "mean"), h=("Hold_Sharpe", "mean"), t=("Val_Turnover", "mean")).reindex(["D", "W", "M", "Q", "S"])
     d["freq"] = [{"f": n, "v": round(r.v, 2), "h": round(r.h, 2), "t": round(r.t, 1)} for n, r in zip(["Daily", "Weekly", "Monthly", "Quarterly", "Half-yearly"], f.itertuples())]
     d["scatter"] = [[round(a, 3), round(b, 3)] for a, b in zip(g.Val_Sharpe, g.Hold_Sharpe)]
     ic = rd("signal_ic_decay.csv"); v = ic[ic.Window == "Val"].set_index("Signal")
     cols = ["IC_1d", "IC_5d", "IC_21d", "IC_63d", "IC_126d"]
-    names = {"composite_quantitative": "Hand-set composite", "momentum_12_1": "Momentum 12-1", "ridge": "Ridge (ML)", "lgbm": "LightGBM (ML)", "mlp": "Neural net (DL)"}
+    names = {"momentum_6m": "Momentum 6m", "momentum_12_1": "Momentum 12-1", "risk_adjusted_momentum": "Risk-adj. momentum", "composite_quantitative": "Hand-set composite", "trend_quality": "Trend quality"}
     d["ic"] = [{"n": nm, "v": [round(float(v.loc[k, c]), 4) for c in cols]} for k, nm in names.items() if k in v.index]
     pl = rd("placebo_random.csv"); st = rd("statistical_tests.csv").iloc[0]
     S = rd("strategy_summary.csv"); g_ = lambda s, w: S[(S.Strategy == s) & (S.Window == w)].iloc[0]
@@ -61,15 +61,11 @@ def build_data():
     d["weights"] = [{"n": nm[k], "vs": round(float(q[(q.Scheme == k) & (q.Window == "Val")].Sharpe.iloc[0]), 2), "hs": round(float(q[(q.Scheme == k) & (q.Window == "Hold")].Sharpe.iloc[0]), 2),
                      "vd": round(float(q[(q.Scheme == k) & (q.Window == "Val")].MaxDD.iloc[0]) * 100, 1)} for k in nm]
     gm = g0.groupby("Signal").agg(v=("Val_Sharpe", "mean"), dd=("Val_MaxDD", "mean")).sort_values("v", ascending=False)
-    info = {"momentum_6m": ("Momentum 6m", "Factor"), "risk_adjusted_momentum": ("Risk-adjusted momentum", "Factor"), "mlp": ("Neural net (MLP)", "DL"),
-            "momentum_12_1": ("Momentum 12-1", "Factor"), "momentum_lowvol": ("Momentum + low vol", "Factor"), "ml_ensemble": ("ML ensemble (3 models)", "ML + DL"),
-            "ridge": ("Ridge regression", "ML"), "hybrid": ("Hybrid (factor + ML)", "Blend"), "relative_strength": ("Relative strength", "Factor"),
-            "lgbm": ("LightGBM", "ML"), "technical_composite": ("Technical composite", "Factor"), "composite_quantitative": ("Hand-set composite", "Factor"),
-            "trend_quality": ("Trend quality", "Factor")}
+    mom = {"momentum_6m": "Momentum 6m", "risk_adjusted_momentum": "Risk-adjusted momentum", "momentum_12_1": "Momentum 12-1", "momentum_lowvol": "Momentum + low volatility"}
+    oth = {"relative_strength": "Relative strength", "technical_composite": "Technical composite", "composite_quantitative": "Hand-set composite", "trend_quality": "Trend quality"}
+    info = {**{k: (n, "Momentum") for k, n in mom.items()}, **{k: (n, "Other") for k, n in oth.items()}}
     top3 = list(gm.index[:3])
     d["sig"] = [{"k": k, "n": info[k][0], "t": info[k][1], "v": round(r.v, 2), "dd": round(r.dd * 100, 1), "ic": round(float(v.loc[k, "IC_21d"]), 3), "pick": k in top3} for k, r in gm.iterrows()]
-    rl = rd("rl_overlay.csv")
-    d["rl"] = [{"n": r.Strategy, "sh": round(r.Sharpe, 2), "cagr": round(r.CAGR * 100, 1), "dd": round(r.MaxDD * 100, 1), "ex": (None if pd.isna(r.AvgExposure) else round(r.AvgExposure * 100))} for r in rl.itertuples() if r.Strategy != "Benchmark"]
     ro = rd("rolling_summary.csv").set_index("Months"); bo = rd("bootstrap.csv").iloc[0]
     d["stats"] = {"roll6": float(ro.loc[6, "BeatBenchmark"]), "roll12": float(ro.loc[12, "BeatBenchmark"]), "boot": float(bo.ProbExcessPositive), "ci": [float(bo.CI5), float(bo.CI95)], "excess": float(bo.MeanAnnExcess)}
     fcs = {"Monthly": "core3 | Monthly", "Quarterly": "core3 | Quarterly", "Half-yearly": F}
@@ -102,24 +98,22 @@ def logo_tag():
 
 
 def tables(d):
-    tcls = {"Factor": "t-info", "ML": "t-ok", "DL": "t-pur", "ML + DL": "t-ok", "Blend": "t-grey"}
+    tcls = {"Momentum": "t-info", "Other": "t-grey"}
     rows = "".join(f'<tr{" class=hl" if x["pick"] else ""}><td>{i + 1}</td><td>{x["n"]}</td><td><span class="tag {tcls[x["t"]]}">{x["t"]}</span></td><td>{x["v"]:.2f}</td><td>{x["ic"]:.3f}</td><td>{x["dd"]:.0f}%</td><td>{"Yes" if x["pick"] else ""}</td></tr>' for i, x in enumerate(d["sig"]))
-    sig = '<table class="t2"><tr><th>#</th><th>Signal</th><th>Type</th><th>Val. Sharpe</th><th>Rank IC 21d</th><th>Max DD</th><th>Pick</th></tr>' + rows + "</table>"
-    by = {x["k"]: x for x in d["sig"]}
-    ml = [("ridge", "Ridge regression", "ML", "Not selected"), ("lgbm", "LightGBM", "ML", "Not selected"), ("mlp", "Neural net (MLP)", "DL", "In final blend"), ("ml_ensemble", "ML ensemble (3 models)", "ML + DL", "Not selected")]
-    r2 = "".join(f'<tr{" class=hl" if k == "mlp" else ""}><td>{n}</td><td><span class="tag {tcls[t]}">{t}</span></td><td>{by[k]["v"]:.2f}</td><td>{by[k]["ic"]:.3f}</td><td>{v}</td></tr>' for k, n, t, v in ml)
-    r2 += f'<tr><td>Q-learning exposure overlay</td><td><span class="tag t-warn">RL</span></td><td>-</td><td>-</td><td>Rejected</td></tr>'
-    mlt = '<table class="t2 t3"><tr><th>Model</th><th>Type</th><th>Val. Sharpe</th><th>Rank IC 21d</th><th>Decision</th></tr>' + r2 + "</table>"
-    rl = "".join(f'<tr><td>{x["n"].replace("Core3 Q", "Strategy")}</td><td>{x["cagr"]:.1f}%</td><td>{x["dd"]:.1f}%</td><td>{"-" if x["ex"] is None else str(x["ex"]) + "%"}</td></tr>' for x in d["rl"])
-    rlt = '<table class="t2 t3"><tr><th>Feb 2023 onward</th><th>CAGR</th><th>Max DD</th><th>Exposure</th></tr>' + rl + "</table>"
+    sig = '<table class="t2"><tr><th>#</th><th>Signal</th><th>Family</th><th>Val. Sharpe</th><th>Rank IC 21d</th><th>Max DD</th><th>Pick</th></tr>' + rows + "</table>"
+    fam = ""
+    for g_name in ("Momentum", "Other"):
+        xs = [x for x in d["sig"] if x["t"] == g_name]
+        fam += f'<tr{" class=hl" if g_name == "Momentum" else ""}><td>{g_name}</td><td>{len(xs)}</td><td>{sum(x["v"] for x in xs) / len(xs):.2f}</td><td>{max(x["v"] for x in xs):.2f}</td><td>{sum(x["ic"] for x in xs) / len(xs):.3f}</td><td>{sum(x["pick"] for x in xs)} of 3</td></tr>'
+    mlt = '<table class="t2 t3"><tr><th>Family</th><th>Signals</th><th>Mean Val. Sharpe</th><th>Best</th><th>Mean IC 21d</th><th>In top 3</th></tr>' + fam + "</table>"
     pc = lambda x, n=1: f"{x * 100:.{n}f}%"
     fr = "".join(f'<tr{" class=hl" if x["f"] == "Half-yearly" else ""}><td>{x["f"]}</td><td>{x["vs"]:.2f}</td><td>{pc(x["vd"], 0)}</td><td>{x["hs"]:.2f}</td><td>{pc(x["hr"], 0)}</td><td>{pc(x["fc"], 0)}</td><td>{x["t"]:.1f}x</td></tr>' for x in d["fc"])
     fct = '<table class="t2 t3"><tr><th>Rebalance</th><th>Val. Sharpe</th><th>Val. Max DD</th><th>Holdout Sharpe</th><th>Holdout return</th><th>CAGR 2022-26</th><th>Turnover / year</th></tr>' + fr + "</table>"
     rows = "".join(f'<tr><td>{x["t"]}</td><td>{x["v"]}</td><td>{x["sh"]:.2f}</td><td>{pc(x["dd"], 0)}</td><td>{pc(x["cagr"], 0)}</td></tr>' for x in d["sens"] if x["t"] in ("Cost per side", "Stale signal (days)"))
     stt = '<table class="t2"><tr><th>Test</th><th>Value</th><th>Sharpe</th><th>Max DD</th><th>CAGR</th></tr>' + rows + "</table>"
-    rk = "".join(f'<tr><td>{x["RankFinal"]}</td><td>{x["Symbol"]}</td><td>{x["RankMomentum6m"]}</td><td>{x["RankRiskAdjMomentum"]}</td><td>{x["RankMLP"]}</td><td>10%</td><td class="{"good" if x["PnL_Rs"] >= 0 else "bad"}">{x["PnL_Rs"] / 1e5:+.2f}</td></tr>' for x in d["rank"])
-    rkt = '<table class="t2 t3"><tr><th>Final rank</th><th>Stock</th><th>Momentum 6m rank</th><th>Risk-adj. momentum rank</th><th>MLP rank</th><th>Weight</th><th>P&amp;L (Rs lakh)</th></tr>' + rk + "</table>"
-    nm = {"momentum_6m": "Mom. 6m", "risk_adjusted_momentum": "Risk-adj. mom.", "mlp": "MLP", "momentum_12_1": "Mom. 12-1", "trend_quality": "Trend quality", "ridge": "Ridge", "lgbm": "LightGBM"}
+    rk = "".join(f'<tr><td>{x["RankFinal"]}</td><td>{x["Symbol"]}</td><td>{x["RankMomentum6m"]}</td><td>{x["RankRiskAdjMomentum"]}</td><td>{x["RankMomentum12_1"]}</td><td>10%</td><td class="{"good" if x["PnL_Rs"] >= 0 else "bad"}">{x["PnL_Rs"] / 1e5:+.2f}</td></tr>' for x in d["rank"])
+    rkt = '<table class="t2 t3"><tr><th>Final rank</th><th>Stock</th><th>Momentum 6m rank</th><th>Risk-adj. momentum rank</th><th>Momentum 12-1 rank</th><th>Weight</th><th>P&amp;L (Rs lakh)</th></tr>' + rk + "</table>"
+    nm = {"momentum_6m": "Mom. 6m", "risk_adjusted_momentum": "Risk-adj. mom.", "momentum_12_1": "Mom. 12-1", "momentum_lowvol": "Mom. + low vol", "relative_strength": "Rel. strength", "trend_quality": "Trend quality", "technical_composite": "Technical comp."}
     c = d["corr"]
     def cell(v):
         a = min(1, max(0, abs(v)))
@@ -129,7 +123,7 @@ def tables(d):
     hr_ = "".join(f'<tr><td>{x["v"]}</td><td>{x["sh"]:.2f}</td><td>{pc(x["dd"], 0)}</td></tr>' for x in d["sens"] if x["t"] == "Holdings")
     hdt = '<table class="t2"><tr><th>Stocks held</th><th>Sharpe</th><th>Max DD</th></tr>' + hr_ + "</table>"
     d["_hold"] = hdt
-    return sig, mlt, rlt, fct, stt, rkt, ct
+    return sig, mlt, "", fct, stt, rkt, ct
 
 
 def main():
@@ -157,7 +151,7 @@ def main():
         "__DSR__": f"{d['placebo']['dsr']:.2f}", "__TRIALS__": str(d["placebo"]["trials"]),
         "__HOLD__": f"+{d['holds'] * 100:.1f}", "__HOLDB__": f"+{d['holdb'] * 100:.1f}",
         "__TURNX__": f"{d['freq'][0]['t'] / d['freq'][4]['t']:.0f}", "__Y25__": f"{d['years'][3]['s']:.1f}", "__Y25B__": f"{d['years'][3]['b']:.1f}",
-        "__FCAGR__": f"{w['full']['cagr'] * 100:.1f}", "__FB__": f"{w['full']['bcagr'] * 100:.1f}",
+        "__FSH__": f"{w['full']['sharpe']:.2f}", "__FCAGR__": f"{w['full']['cagr'] * 100:.1f}", "__FB__": f"{w['full']['bcagr'] * 100:.1f}",
     }
     for k, v in rep.items():
         html = html.replace(k, v)

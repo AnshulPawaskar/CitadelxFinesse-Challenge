@@ -22,7 +22,7 @@ HANDSET = ["composite_quantitative", "momentum_12_1", "momentum_6m", "relative_s
 ML = ["ridge", "lgbm", "mlp", "ml_ensemble"]
 SIGNALS = HANDSET + ML + ["hybrid"]
 # Top 3 signals by mean VALIDATION Sharpe across the five frequencies (rule frozen before holdout was inspected).
-CORE3 = ["momentum_6m", "mlp", "risk_adjusted_momentum"]
+CORE3 = ["momentum_6m", "risk_adjusted_momentum", "momentum_12_1"]
 
 
 def idx_on_or_after(dates: pd.DatetimeIndex, day: str) -> int:

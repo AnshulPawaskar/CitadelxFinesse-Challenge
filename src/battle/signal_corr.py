@@ -5,7 +5,7 @@ import pandas as pd
 from src.battle.context import build_context
 from src.battle.data import BATTLE_DIR
 
-SIGNALS = ["momentum_6m", "risk_adjusted_momentum", "mlp", "momentum_12_1", "trend_quality", "ridge", "lgbm"]
+SIGNALS = ["momentum_6m", "risk_adjusted_momentum", "momentum_12_1", "momentum_lowvol", "relative_strength", "trend_quality", "technical_composite"]
 
 
 def main():
